@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MobileLogin.unity
+    guid: d64495789fc86490895601a04beb99bc
+  - enabled: 1
+    path: Assets/Scenes/MobileHome.unity
+    guid: 8a55ef36725574b82a19f0cf555870b3
+  - enabled: 1
+    path: Assets/Scenes/QRScanner.unity
+    guid: 13684a1ae3d7345b3b458236d902e161
+  m_configObjects: {}
