@@ -114,7 +114,7 @@ public class QRCodeScanner : MonoBehaviour
             {
                 MobileGraphics.instance.DisplayMessage("Success");
                 string[] splitFields = result.Text.Split("*");
-                AdminCreator.MarkPresent(Int32.Parse(Database.instance.CurrentUser.InfoResultPayload.AccountInfo.Username), Int32.Parse(splitFields[0]), splitFields[1]);
+                AdminCreator.MarkPresent(Int32.Parse(Database.instance.CurrentUser.InfoResultPayload.AccountInfo.Username), Int32.Parse(splitFields[0]), splitFields[1], false);
             }
             else
             {

@@ -26,6 +26,7 @@ public class AdminCreator : MonoBehaviour
     [SerializeField] private TMP_InputField presentTeacherField;
     [SerializeField] private TMP_InputField presentStudentField;
     [SerializeField] private TMP_InputField presentDateField;
+    [SerializeField] private Toggle presentTardyToggle;
 
     [Header("Day Student Schedule Fields")]
     [SerializeField] private TMP_InputField dayScheduleStudentIdField;
@@ -37,7 +38,7 @@ public class AdminCreator : MonoBehaviour
     [SerializeField] private GameObject searchMenu;
     [SerializeField] private GameObject editMenu;
     [SerializeField] private TMP_Text editTitle;
-    [SerializeField] private GameObject[] classAttendanceParents;
+    [SerializeField] private ClassAttendance[] classAttendanceParents;
 
     [Header("Teacher Attendance Fields")]
     [SerializeField] private GameObject teacherSearchMenu;
@@ -165,12 +166,12 @@ public class AdminCreator : MonoBehaviour
             date = DateTime.Today.ToString("yyyy-MM-dd");
         }
 
-        MarkPresent(Int32.Parse(presentStudentField.text), Int32.Parse(presentTeacherField.text), date);
+        MarkPresent(Int32.Parse(presentStudentField.text), Int32.Parse(presentTeacherField.text), date, presentTardyToggle.isOn);
     }
 
-    public static void MarkPresent(int studentId, int teacherId, string date)
+    public static void MarkPresent(int studentId, int teacherId, string date, bool tardy)
     {
-        Database.instance.ReadData(studentId + "*" + date, new Database.ReadDataCallbackParams<StudentAttendanceEntryData>(MarkPresentCallback), new object[] { studentId, teacherId, date });
+        Database.instance.ReadData(studentId + "*" + date, new Database.ReadDataCallbackParams<StudentAttendanceEntryData>(MarkPresentCallback), new object[] { studentId, teacherId, date, tardy });
     }
 
     private static void MarkPresentCallback(StudentAttendanceEntryData output, object[] additionalParams)
@@ -178,19 +179,32 @@ public class AdminCreator : MonoBehaviour
         int studentId = (int)additionalParams[0];
         int teacherId = (int)additionalParams[1];
         string date = (string)additionalParams[2];
+        bool tardy = (bool)additionalParams[3];
 
         StudentAttendanceEntryData updatedEntry;
 
         if (output == null)
         {
-            updatedEntry = new StudentAttendanceEntryData(studentId, date, new List<string>());
+            updatedEntry = new StudentAttendanceEntryData(studentId, date, new List<string>(), new List<string>());
         }
         else
         {
             updatedEntry = output;
         }
 
+        //presentList
         if (!updatedEntry.presentList.Contains(teacherId.ToString())) updatedEntry.presentList.Add(teacherId.ToString());
+
+        //tardyList
+        if (tardy)
+        {
+            if (!updatedEntry.tardyList.Contains(teacherId.ToString())) updatedEntry.tardyList.Add(teacherId.ToString());
+        }
+        else
+        {
+            if (updatedEntry.tardyList.Contains(teacherId.ToString())) updatedEntry.tardyList.Remove(teacherId.ToString());
+        }
+
 
         Database.instance.SaveDataToFirebase(updatedEntry);
     }
@@ -219,7 +233,7 @@ public class AdminCreator : MonoBehaviour
     {
         if (output == null)
         {
-            currentDayStudentAttendance = new StudentAttendanceEntryData(Int32.Parse(dayScheduleStudentIdField.text), dayScheduleDateField.text, new List<string>());
+            currentDayStudentAttendance = new StudentAttendanceEntryData(Int32.Parse(dayScheduleStudentIdField.text), dayScheduleDateField.text, new List<string>(), new List<string>());
         }
         else
         {
@@ -245,9 +259,10 @@ public class AdminCreator : MonoBehaviour
 
         for (int i = 0; i < 7; i++)
         {
-            classAttendanceParents[i].GetComponentInChildren<TMP_Text>().text = currentDayStudent.classList[i].ToString();
+            classAttendanceParents[i].label.text = currentDayStudent.classList[i].ToString();
             AddTeacherNameToIDField(currentDayStudent.classList[i], i);
-            classAttendanceParents[i].GetComponentInChildren<Toggle>().isOn = currentDayStudentAttendance.presentList.Contains(currentDayStudent.classList[i].ToString());
+            classAttendanceParents[i].presentToggle.isOn = currentDayStudentAttendance.presentList.Contains(currentDayStudent.classList[i].ToString());
+            classAttendanceParents[i].tardyToggle.isOn = currentDayStudentAttendance.tardyList.Contains(currentDayStudent.classList[i].ToString());
         }
     }
 
@@ -272,12 +287,18 @@ public class AdminCreator : MonoBehaviour
     public void UpdateDayAttendance()
     {
         currentDayStudentAttendance.presentList.Clear();
+        currentDayStudentAttendance.tardyList.Clear();
 
         for (int i = 0; i < 7; i++)
         {
-            if (classAttendanceParents[i].GetComponentInChildren<Toggle>().isOn)
+            if (classAttendanceParents[i].presentToggle.isOn)
             {
                 currentDayStudentAttendance.presentList.Add(currentDayStudent.classList[i].ToString());
+            }
+
+            if (classAttendanceParents[i].tardyToggle.isOn)
+            {
+                currentDayStudentAttendance.tardyList.Add(currentDayStudent.classList[i].ToString());
             }
         }
         Database.instance.SaveDataToFirebase(currentDayStudentAttendance);
@@ -316,7 +337,7 @@ public class AdminCreator : MonoBehaviour
 
         if (output == null)
         {
-            student = new StudentAttendanceEntryData(studentId, teacherAttendanceDateField.text, new List<string>());
+            student = new StudentAttendanceEntryData(studentId, teacherAttendanceDateField.text, new List<string>(), new List<string>());
         }
         else
         {
@@ -352,13 +373,16 @@ public class AdminCreator : MonoBehaviour
         {
             GameObject presentBox = Instantiate(studentAttendanceCheckboxPrefab, studentsParentContainer.transform);
 
-            TMP_Text field = presentBox.GetComponentInChildren<TMP_Text>();
+            StudentAttendanceCheckbox checkBox = presentBox.GetComponent<StudentAttendanceCheckbox>();
+
+            TMP_Text field = checkBox.label;
 
             field.text = teacherRosterAttendances[i].studentId.ToString();
 
             AddStudentNameToIDField(teacherRosterAttendances[i].studentId, field);
 
-            presentBox.GetComponentInChildren<Toggle>().isOn = teacherRosterAttendances[i].presentList.Contains(teacherAttendanceIdField.text);
+            checkBox.presentToggle.isOn = teacherRosterAttendances[i].presentList.Contains(teacherAttendanceIdField.text);
+            checkBox.tardyToggle.isOn = teacherRosterAttendances[i].tardyList.Contains(teacherAttendanceIdField.text);
         }
          
     }
@@ -383,27 +407,27 @@ public class AdminCreator : MonoBehaviour
 
     public void UpdateTeacherAttendance()
     {
-        List<GameObject> filteredPresentBoxes = new List<GameObject>();
+        List<StudentAttendanceCheckbox> filteredPresentBoxes = new List<StudentAttendanceCheckbox>();
         for (int i = 0; i < studentsParentContainer.transform.childCount; i++)
         {
-            filteredPresentBoxes.Add(studentsParentContainer.transform.GetChild(i).gameObject);
+            filteredPresentBoxes.Add(studentsParentContainer.transform.GetChild(i).GetComponent<StudentAttendanceCheckbox>());
         }
 
-        filteredPresentBoxes.Sort(delegate (GameObject p1, GameObject p2)
+        filteredPresentBoxes.Sort(delegate (StudentAttendanceCheckbox p1, StudentAttendanceCheckbox p2)
         {
-            return p1.GetComponentInChildren<TMP_Text>().text.CompareTo(p2.GetComponentInChildren<TMP_Text>().text);
+            return p1.label.text.CompareTo(p2.label.text);
         });
 
         string teacherId = teacherAttendanceIdField.text;
 
         for (int i = 0; i < teacherRosterAttendances.Count; i++)
         {
-            if (filteredPresentBoxes[i].GetComponentInChildren<Toggle>().isOn)
+            //presentToggle
+            if (filteredPresentBoxes[i].presentToggle.isOn)
             {
                 if (!teacherRosterAttendances[i].presentList.Contains(teacherId))
                 {
                     teacherRosterAttendances[i].presentList.Add(teacherId);
-                    Database.instance.SaveDataToFirebase(teacherRosterAttendances[i]);
                 }
             }
             else
@@ -411,9 +435,24 @@ public class AdminCreator : MonoBehaviour
                 if (teacherRosterAttendances[i].presentList.Contains(teacherId))
                 {
                     teacherRosterAttendances[i].presentList.Remove(teacherId);
-                    Database.instance.SaveDataToFirebase(teacherRosterAttendances[i]);
                 }
             }
+            //tardyToggle
+            if (filteredPresentBoxes[i].tardyToggle.isOn)
+            {
+                if (!teacherRosterAttendances[i].tardyList.Contains(teacherId))
+                {
+                    teacherRosterAttendances[i].tardyList.Add(teacherId);
+                }
+            }
+            else
+            {
+                if (teacherRosterAttendances[i].tardyList.Contains(teacherId))
+                {
+                    teacherRosterAttendances[i].tardyList.Remove(teacherId);
+                }
+            }
+            Database.instance.SaveDataToFirebase(teacherRosterAttendances[i]);
         }
     }
 }
