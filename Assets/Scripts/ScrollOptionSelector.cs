@@ -30,4 +30,37 @@ public class ScrollOptionSelector : MonoBehaviour
     {
         return contentParent.transform.GetChild(selectedIndex).GetComponentInChildren<TMP_Text>().text;
     }
+
+    public void SetSelectedOption(string option)
+    {
+        //find object
+        Transform selectedObject = null;
+
+        for (int i = 0; i < contentParent.transform.childCount; i++)
+        {
+            if (contentParent.transform.GetChild(i).GetComponentInChildren<TMP_Text>().text.Equals(option))
+            {
+                selectedObject = contentParent.transform.GetChild(i);
+                break;
+            }
+        }
+
+        if (selectedObject == null)
+        {
+            Debug.LogError("Couldn't find option: " + option);
+            return;
+        }
+
+        //get position
+        float yPos = selectedObject.localPosition.y;
+        yPos += contentParent.GetComponent<GridLayoutGroup>().padding.top;
+        yPos += contentParent.GetComponent<GridLayoutGroup>().cellSize.y / 2;
+        yPos *= -1;
+
+        //set position
+        contentParent.transform.localPosition = new Vector3(0, yPos, 0);
+
+        //update index
+        UpdateIndex();
+    }
 }
