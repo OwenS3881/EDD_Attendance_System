@@ -84,4 +84,9 @@ public class Database : MonoBehaviour
             callback(default(T), additionalParamters);
         });
     }
+
+    public string GetUsername()
+    {
+        return CurrentUser.InfoResultPayload.AccountInfo.Username;
+    }
 }

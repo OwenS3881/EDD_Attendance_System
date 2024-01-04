@@ -12,6 +12,9 @@ public class DatePicker : MonoBehaviour
     [SerializeField] private ScrollOptionSelector daySelector;
     [SerializeField] private ScrollOptionSelector yearSelector;
 
+    private DateButton currentButton;
+    private string resetDate;
+
     private string selectedDate;
     public string SelectedDate
     {
@@ -29,8 +32,7 @@ public class DatePicker : MonoBehaviour
         }
         set
         {
-            DateTime result;
-            if (!DateTime.TryParseExact(value, "yyyy-MM-dd", new CultureInfo("en-US"), DateTimeStyles.None, out result)) return;
+            if (!IsDateValid(value)) return;
 
             selectedDate = value;
 
@@ -42,8 +44,15 @@ public class DatePicker : MonoBehaviour
         }
     }
 
+    public static bool IsDateValid(string date)
+    {
+        DateTime result;
+        return DateTime.TryParseExact(date, "yyyy-MM-dd", new CultureInfo("en-US"), DateTimeStyles.None, out result);
+    }
+
     private void Start()
     {
+        resetDate = DateTime.Today.ToString("yyyy-MM-dd");
         Invoke(nameof(ResetDate), 0.01f);
     }
 
@@ -55,6 +64,28 @@ public class DatePicker : MonoBehaviour
 
     public void ResetDate()
     {
-        SelectedDate = DateTime.Today.ToString("yyyy-MM-dd");
+        SelectedDate = resetDate;
+    }
+
+    public void Initialize(DateButton button, string initialDate)
+    {
+        if (string.IsNullOrEmpty(initialDate))
+        {
+            resetDate = DateTime.Today.ToString("yyyy-MM-dd");
+        }
+        else
+        {
+            resetDate = initialDate;
+        }
+
+        ResetDate();
+
+        currentButton = button;
+    }
+
+    public void Select()
+    {
+        currentButton.CurrentDate = SelectedDate;
+        gameObject.SetActive(false);
     }
 }

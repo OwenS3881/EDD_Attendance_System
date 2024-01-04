@@ -8,6 +8,7 @@ public class MobileGraphics : MonoBehaviour
 
     [SerializeField] private GameObject mobileMessageObject;
     [SerializeField] private GameObject loadingScreen;
+    [SerializeField] private DatePicker datePicker;
 
     private void Awake()
     {
@@ -32,5 +33,11 @@ public class MobileGraphics : MonoBehaviour
     public void Loading(bool isLoading)
     {
         loadingScreen.SetActive(isLoading);
+    }
+
+    public void SelectDate(DateButton button, string initialDate)
+    {
+        datePicker.gameObject.SetActive(true);
+        datePicker.Initialize(button, initialDate);
     }
 }

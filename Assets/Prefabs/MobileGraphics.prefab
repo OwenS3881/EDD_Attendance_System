@@ -1647,6 +1647,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mobileMessageObject: {fileID: 3819802096376266380, guid: 656ae4e5e94b240deacba3b1d55b3f10, type: 3}
   loadingScreen: {fileID: 1036692889186787643}
+  datePicker: {fileID: 161778136161674056}
 --- !u!1 &5508104725244479023
 GameObject:
   m_ObjectHideFlags: 0
@@ -2507,7 +2508,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2697607032065599200}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 161778136161674056}
+        m_TargetAssemblyTypeName: DatePicker, Assembly-CSharp
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8644118319035552461
 GameObject:
   m_ObjectHideFlags: 0
