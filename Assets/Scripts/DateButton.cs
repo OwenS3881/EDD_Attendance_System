@@ -29,6 +29,8 @@ public class DateButton : MonoBehaviour
                 dateLabel.text = "Select Date";
             }
 
+            if (currentDate != null && currentDate.Equals(value)) return;
+
             currentDate = value;
 
             string[] splitDate = currentDate.Split('-');

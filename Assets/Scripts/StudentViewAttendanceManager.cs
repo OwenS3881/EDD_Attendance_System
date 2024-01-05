@@ -38,6 +38,7 @@ public class StudentViewAttendanceManager : MonoBehaviour
     {
         Database.instance.ReadData(Database.instance.GetUsername(), new Database.ReadDataCallback<StudentInfoData>(SelectStudentDayScheduleCallbackInfo));
         Database.instance.ReadData(Database.instance.GetUsername() + "*" + dayAttendanceDate.CurrentDate, new Database.ReadDataCallback<StudentAttendanceEntryData>(SelectStudentDayScheduleCallbackAttendance));
+        MobileGraphics.instance.Loading(true);
     }
 
     private void SelectStudentDayScheduleCallbackInfo(StudentInfoData output)
@@ -72,6 +73,8 @@ public class StudentViewAttendanceManager : MonoBehaviour
     private void FoundStudent()
     {
         if (!foundStudentAttendance || !foundStudentInfo) return;
+
+        MobileGraphics.instance.Loading(false);
 
         foundStudentAttendance = false;
         foundStudentInfo = false;
