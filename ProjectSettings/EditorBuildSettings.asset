@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/QRScanner.unity
     guid: 13684a1ae3d7345b3b458236d902e161
+  - enabled: 1
+    path: Assets/Scenes/MobileViewAttendance.unity
+    guid: d018b8f54cf1faf4a8d34c408064c0b0
   m_configObjects: {}

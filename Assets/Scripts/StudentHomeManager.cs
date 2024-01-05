@@ -10,6 +10,11 @@ public class StudentHomeManager : MonoBehaviour
         SceneManager.LoadScene("QRScanner");
     }
 
+    public void ViewAttendance()
+    {
+        SceneManager.LoadScene("MobileViewAttendance");
+    }
+
     public void Logout()
     {
         Database.instance.LogoutUser();

@@ -4,10 +4,13 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using UnityEngine.Events;
 
 public class DateButton : MonoBehaviour
 {
     [SerializeField] private TMP_Text dateLabel;
+
+    public UnityEvent OnSelect;
 
     private string[] monthAbbreviations = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
@@ -35,12 +38,19 @@ public class DateButton : MonoBehaviour
             string day = Int32.Parse(splitDate[2]).ToString();
 
             dateLabel.text = $"{month} {day}, {year}";
+
+            OnSelect.Invoke();
         }
     }
 
     public void SelectDate()
     {
         MobileGraphics.instance.SelectDate(this, CurrentDate);
+    }
+
+    public void ResetDate()
+    {
+        CurrentDate = null;
     }
 
 }
