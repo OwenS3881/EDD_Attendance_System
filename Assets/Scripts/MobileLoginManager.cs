@@ -17,6 +17,10 @@ public class MobileLoginManager : MonoBehaviour
     [SerializeField] private TMP_InputField idInput;
     [SerializeField] private TMP_InputField passwordInput;
     [SerializeField] private TMP_InputField forgotPasswordEmailInput;
+    [SerializeField] private TMP_InputField createIdInput;
+    [SerializeField] private TMP_InputField createPasswordInput;
+    [SerializeField] private TMP_InputField createPasswordConfirmInput;
+    [SerializeField] private TMP_InputField createEmailInput;
 
     private void Start()
     {
@@ -84,6 +88,66 @@ public class MobileLoginManager : MonoBehaviour
     {
         MobileGraphics.instance.Loading(false);
         OutputMessage("Password reset email sent, check your email for further instructions, then try logging in");
+    }
+
+    public void RegisterAccount()
+    {
+        if (string.IsNullOrEmpty(createIdInput.text))
+        {
+            OutputMessage("Please enter an ID");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(createPasswordInput.text))
+        {
+            OutputMessage("Please enter a password");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(createPasswordConfirmInput.text))
+        {
+            OutputMessage("Please confirm your password");
+            return;
+        }
+
+        if (!createPasswordInput.text.Equals(createPasswordConfirmInput.text))
+        {
+            OutputMessage("Passwords do not match");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(createEmailInput.text))
+        {
+            OutputMessage("Please enter an email");
+            return;
+        }
+
+        Database.instance.ReadData(createIdInput.text, new Database.ReadDataCallback<StudentInfoData>(VerifyCreateId));
+        MobileGraphics.instance.Loading(true);
+    }
+
+    private void VerifyCreateId(StudentInfoData output)
+    {
+        if (output == null)
+        {
+            OutputMessage("Student ID does not exist");
+            MobileGraphics.instance.Loading(false);
+            return;
+        }
+
+        RegisterPlayFabUserRequest request = new RegisterPlayFabUserRequest
+        {
+            Username = createIdInput.text,
+            Password = createPasswordInput.text,
+            Email = createEmailInput.text
+        };
+        PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnError);
+    }
+
+    void OnRegisterSuccess(RegisterPlayFabUserResult result)
+    {
+        OutputMessage("Account regsitered successfully!");
+        MobileGraphics.instance.Loading(false);
     }
 
     void OnError(PlayFabError error)

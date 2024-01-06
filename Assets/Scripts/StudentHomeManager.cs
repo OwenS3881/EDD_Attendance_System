@@ -15,6 +15,11 @@ public class StudentHomeManager : MonoBehaviour
         SceneManager.LoadScene("MobileViewAttendance");
     }
 
+    public void ViewAccountInfo()
+    {
+        SceneManager.LoadScene("MobileAccountInfo");
+    }
+
     public void Logout()
     {
         Database.instance.LogoutUser();

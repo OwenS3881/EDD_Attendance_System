@@ -19,7 +19,7 @@ public class ScrollOptionSelector : MonoBehaviour
     {
         contentParent.transform.GetChild(selectedIndex).GetComponent<Image>().enabled = false;
 
-        selectedIndex = (int)(contentParent.transform.localPosition.y / distanceBetweenOptions);
+        selectedIndex = (int)((contentParent.transform.localPosition.y + (distanceBetweenOptions/2)) / distanceBetweenOptions);
 
         selectedIndex = Mathf.Clamp(selectedIndex, 0, contentParent.transform.childCount - 1);
 

@@ -95,24 +95,6 @@ public class AdminCreator : MonoBehaviour
         Database.instance.SaveDataToFirebase(newStudent);
 
         StartCoroutine(AddStudentToRoster(studentId, teacherIds, 0));
-
-        RegisterPlayFabUserRequest request = new RegisterPlayFabUserRequest
-        {
-            Username = studentIdInput.text,
-            Password = "123456",
-            RequireBothUsernameAndEmail = false
-        };
-        PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnError);
-    }
-
-    void OnRegisterSuccess(RegisterPlayFabUserResult result)
-    {
-        Debug.Log("Registered and logged in!");
-    }
-
-    void OnError(PlayFabError error)
-    {
-        Debug.LogError(error.GenerateErrorReport());
     }
 
     IEnumerator AddStudentToRoster(int studentId, int[] teacherIds, int index)

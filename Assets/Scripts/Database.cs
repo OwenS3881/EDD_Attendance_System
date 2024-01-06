@@ -66,7 +66,7 @@ public class Database : MonoBehaviour
 
         }).Catch(error =>
         {
-            Debug.Log(error);
+            Debug.LogWarning(error);
             callback(default(T));
         });
     }
@@ -80,7 +80,7 @@ public class Database : MonoBehaviour
 
         }).Catch(error =>
         {
-            Debug.Log(error);
+            Debug.LogWarning(error);
             callback(default(T), additionalParamters);
         });
     }
@@ -88,5 +88,10 @@ public class Database : MonoBehaviour
     public string GetUsername()
     {
         return CurrentUser.InfoResultPayload.AccountInfo.Username;
+    }
+
+    public string GetUserEmail()
+    {
+        return CurrentUser.InfoResultPayload.AccountInfo.PrivateInfo.Email;
     }
 }
