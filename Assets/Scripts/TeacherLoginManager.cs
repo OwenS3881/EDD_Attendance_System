@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 
-public class MobileLoginManager : MonoBehaviour
+public class TeacherLoginManager : MonoBehaviour
 {
     [Header("UI Initialize Fields")]
     [SerializeField] private GameObject mainScreen;
@@ -33,7 +33,7 @@ public class MobileLoginManager : MonoBehaviour
 
     public void OutputMessage(string message)
     {
-        MobileGraphics.instance.DisplayMessage(message);
+        DesktopGraphics.instance.DisplayMessage(message);
     }
 
     public void Login()
@@ -50,16 +50,16 @@ public class MobileLoginManager : MonoBehaviour
             return;
         }
 
-        Database.instance.ReadData(idInput.text, new Database.ReadDataCallback<StudentInfoData>(VerifyLoginId));
-        MobileGraphics.instance.Loading(true);
+        Database.instance.ReadData(idInput.text, new Database.ReadDataCallback<TeacherInfoData>(VerifyLoginId));
+        DesktopGraphics.instance.Loading(true);
     }
 
-    private void VerifyLoginId(StudentInfoData output)
+    private void VerifyLoginId(TeacherInfoData output)
     {
-        if (output == null || string.IsNullOrEmpty(output.studentName))
+        if (output == null || string.IsNullOrEmpty(output.teacherName))
         {
-            OutputMessage("Student ID does not exist");
-            MobileGraphics.instance.Loading(false);
+            OutputMessage("Teacher ID does not exist");
+            DesktopGraphics.instance.Loading(false);
             return;
         }
 
@@ -74,9 +74,9 @@ public class MobileLoginManager : MonoBehaviour
 
     void OnLoginSuccess(LoginResult result)
     {
-        MobileGraphics.instance.Loading(false);
+        DesktopGraphics.instance.Loading(false);
         Database.instance.CurrentUser = result;
-        SceneManager.LoadScene("MobileHome");
+        SceneManager.LoadScene("TeacherHome");
     }
 
     public void ResetPassword()
@@ -93,12 +93,12 @@ public class MobileLoginManager : MonoBehaviour
             TitleId = "8C68F"
         };
         PlayFabClientAPI.SendAccountRecoveryEmail(request, OnPasswordReset, OnError);
-        MobileGraphics.instance.Loading(true);
+        DesktopGraphics.instance.Loading(true);
     }
 
     void OnPasswordReset(SendAccountRecoveryEmailResult result)
     {
-        MobileGraphics.instance.Loading(false);
+        DesktopGraphics.instance.Loading(false);
         OutputMessage("Password reset email sent, check your email for further instructions, then try logging in");
     }
 
@@ -134,16 +134,16 @@ public class MobileLoginManager : MonoBehaviour
             return;
         }
 
-        Database.instance.ReadData(createIdInput.text, new Database.ReadDataCallback<StudentInfoData>(VerifyCreateId));
-        MobileGraphics.instance.Loading(true);
+        Database.instance.ReadData(createIdInput.text, new Database.ReadDataCallback<TeacherInfoData>(VerifyCreateId));
+        DesktopGraphics.instance.Loading(true);
     }
 
-    private void VerifyCreateId(StudentInfoData output)
+    private void VerifyCreateId(TeacherInfoData output)
     {
-        if (output == null || string.IsNullOrEmpty(output.studentName))
+        if (output == null || string.IsNullOrEmpty(output.teacherName))
         {
-            OutputMessage("Student ID does not exist");
-            MobileGraphics.instance.Loading(false);
+            OutputMessage("Teacher ID does not exist");
+            DesktopGraphics.instance.Loading(false);
             return;
         }
 
@@ -159,12 +159,12 @@ public class MobileLoginManager : MonoBehaviour
     void OnRegisterSuccess(RegisterPlayFabUserResult result)
     {
         OutputMessage("Account regsitered successfully!");
-        MobileGraphics.instance.Loading(false);
+        DesktopGraphics.instance.Loading(false);
     }
 
     void OnError(PlayFabError error)
     {
-        MobileGraphics.instance.Loading(false);
+        DesktopGraphics.instance.Loading(false);
         OutputMessage("Error: " + error.GenerateErrorReport());
     }
 }

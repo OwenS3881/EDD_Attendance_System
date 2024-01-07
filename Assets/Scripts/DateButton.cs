@@ -45,9 +45,14 @@ public class DateButton : MonoBehaviour
         }
     }
 
-    public void SelectDate()
+    public void SelectDateMobile()
     {
         MobileGraphics.instance.SelectDate(this, CurrentDate);
+    }
+
+    public void SelectDateDesktop()
+    {
+        DesktopGraphics.instance.SelectDate(this, CurrentDate);
     }
 
     public void ResetDate()

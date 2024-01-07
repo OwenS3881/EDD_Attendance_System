@@ -20,4 +20,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MobileAccountInfo.unity
     guid: b94b373854a61c8488e829454dfee044
+  - enabled: 1
+    path: Assets/Scenes/TeacherLogin.unity
+    guid: 2f322bf0c0d943e4998f25ff736f5711
+  - enabled: 1
+    path: Assets/Scenes/TeacherHome.unity
+    guid: 67107d3043372144087a596141fc7f3f
   m_configObjects: {}

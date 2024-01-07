@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2064213562704826883}
   - component: {fileID: 6479048118189114270}
   m_Layer: 5
-  m_Name: DateButton
+  m_Name: DateButtonMobile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -124,7 +124,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6479048118189114270}
         m_TargetAssemblyTypeName: DateButton, Assembly-CSharp
-        m_MethodName: SelectDate
+        m_MethodName: SelectDateMobile
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -147,6 +147,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dateLabel: {fileID: 8843901760725720567}
+  OnSelect:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3439730693453250473
 GameObject:
   m_ObjectHideFlags: 0
