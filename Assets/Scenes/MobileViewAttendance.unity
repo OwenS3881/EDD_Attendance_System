@@ -916,7 +916,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 124.45
+  m_fontSize: 99.6
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2747,6 +2747,34 @@ PrefabInstance:
     - target: {fileID: 3385064633817330374, guid: 72d084dfdf1a2f84e86c40ff53056ff0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6479048118189114270, guid: 72d084dfdf1a2f84e86c40ff53056ff0, type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6479048118189114270, guid: 72d084dfdf1a2f84e86c40ff53056ff0, type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6479048118189114270, guid: 72d084dfdf1a2f84e86c40ff53056ff0, type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 582554002}
+    - target: {fileID: 6479048118189114270, guid: 72d084dfdf1a2f84e86c40ff53056ff0, type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6479048118189114270, guid: 72d084dfdf1a2f84e86c40ff53056ff0, type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SelectStudentDaySchedule
+      objectReference: {fileID: 0}
+    - target: {fileID: 6479048118189114270, guid: 72d084dfdf1a2f84e86c40ff53056ff0, type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: StudentViewAttendanceManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6479048118189114270, guid: 72d084dfdf1a2f84e86c40ff53056ff0, type: 3}
+      propertyPath: OnSelect.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

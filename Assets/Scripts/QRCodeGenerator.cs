@@ -9,7 +9,7 @@ using TMPro;
 public class QRCodeGenerator : MonoBehaviour
 {
     [SerializeField] private RawImage rawImageReceiver;
-    [SerializeField] private TMP_InputField textInput;
+    [SerializeField] private DateButton dateInput;
 
     private Texture2D storeEncodedTexture;
 
@@ -21,9 +21,10 @@ public class QRCodeGenerator : MonoBehaviour
 
     public void GenerateCode()
     {
-        EncodeTextToStoreTexture(textInput.text);
+        EncodeTextToStoreTexture($"eddAttendance*{Database.instance.GetUsername()}*{dateInput.CurrentDate}");
         rawImageReceiver.texture = storeEncodedTexture;
     }
+
 
     private void EncodeTextToStoreTexture(string input)
     {
