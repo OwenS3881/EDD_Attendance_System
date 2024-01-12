@@ -26,4 +26,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TeacherHome.unity
     guid: 67107d3043372144087a596141fc7f3f
+  - enabled: 1
+    path: Assets/Scenes/AdminLogin.unity
+    guid: 06f4c67625a7e4e99ba4c2631b3889ab
+  - enabled: 1
+    path: Assets/Scenes/AdminHome.unity
+    guid: ff08011a6841d4f4481c8baa609e38c4
   m_configObjects: {}

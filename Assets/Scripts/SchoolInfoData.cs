@@ -9,10 +9,8 @@ public class SchoolInfoData : BasicData
     public string schoolName;
     public List<string> teacherList;
     public List<string> studentList;
-    public Dictionary<string, ListWrapper<int>> blockSchedule;
-    public Dictionary<string, ListWrapper<int>> scheduleOverrides;
-    public List<string> offDays;
-    public Dictionary<string, string> test;
+    public List<ScheduledPeriods> blockSchedule; //contains periods that will occur on each day
+    public List<ScheduledPeriods> scheduleOverrides; //set periods for days with alternate schedules; for days off, set the periods list to null/empty
 
     public SchoolInfoData(SchoolInfoData clone)
     {
@@ -23,10 +21,9 @@ public class SchoolInfoData : BasicData
         this.studentList = clone.studentList;
         this.blockSchedule = clone.blockSchedule;
         this.scheduleOverrides = clone.scheduleOverrides;
-        this.offDays = clone.offDays;
     }
 
-    public SchoolInfoData(int schoolId, string schoolName, List<string> teacherList, List<string> studentList, Dictionary<string, ListWrapper<int>> blockSchedule, Dictionary<string, ListWrapper<int>> scheduleOverrides, List<string> offDays)
+    public SchoolInfoData(int schoolId, string schoolName, List<string> teacherList, List<string> studentList, List<ScheduledPeriods> blockSchedule, List<ScheduledPeriods> scheduleOverrides)
     {
         this.fileName = schoolId.ToString();
         this.schoolId = schoolId;
@@ -35,17 +32,16 @@ public class SchoolInfoData : BasicData
         this.studentList = studentList;
         this.blockSchedule = blockSchedule;
         this.scheduleOverrides = scheduleOverrides;
-        this.offDays = offDays;
 
         if (blockSchedule.Count < 7)
         {
-            string[] daysOfTheWeek = new string[] {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" };
+            string[] daysOfTheWeek = new string[] {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
             for (int i = 0; i < daysOfTheWeek.Length; i++)
             {
-                blockSchedule[daysOfTheWeek[i]] = new ListWrapper<int>();
+                blockSchedule.Add(new ScheduledPeriods(daysOfTheWeek[i], new List<int>()));
                 for (int j = 1; j <= 7; j++)
                 {
-                    blockSchedule[daysOfTheWeek[i]].Add(j);
+                    blockSchedule[i].periods.Add(j);
                 }
             }
         }

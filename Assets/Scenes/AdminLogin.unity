@@ -2427,8 +2427,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TeacherLoginManager, Assembly-CSharp
+      - m_Target: {fileID: 1918002314}
+        m_TargetAssemblyTypeName: AdminLoginManager, Assembly-CSharp
         m_MethodName: ResetPassword
         m_Mode: 1
         m_Arguments:
@@ -5686,8 +5686,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TeacherLoginManager, Assembly-CSharp
+      - m_Target: {fileID: 1918002314}
+        m_TargetAssemblyTypeName: AdminLoginManager, Assembly-CSharp
         m_MethodName: Login
         m_Mode: 1
         m_Arguments:
@@ -6923,6 +6923,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5280e50b753b48d0b9941483bf83d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainScreen: {fileID: 2130688290}
+  otherScreens:
+  - {fileID: 1978591590}
+  - {fileID: 609955848}
+  idInput: {fileID: 1606896868}
+  passwordInput: {fileID: 892381053}
+  forgotPasswordEmailInput: {fileID: 484972898}
+  createIdInput: {fileID: 838838396}
+  createPasswordInput: {fileID: 1186943294}
+  createPasswordConfirmInput: {fileID: 346584192}
+  createEmailInput: {fileID: 287275474}
 --- !u!1 &1922493102
 GameObject:
   m_ObjectHideFlags: 0
@@ -7140,8 +7151,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: TeacherLoginManager, Assembly-CSharp
+      - m_Target: {fileID: 1918002314}
+        m_TargetAssemblyTypeName: AdminLoginManager, Assembly-CSharp
         m_MethodName: RegisterAccount
         m_Mode: 1
         m_Arguments:

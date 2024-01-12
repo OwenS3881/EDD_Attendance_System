@@ -7,9 +7,9 @@ using UnityEngine.SceneManagement;
 using PlayFab;
 using PlayFab.ClientModels;
 
-public class TeacherHomeManager : MonoBehaviour
+public class AdminHomeManager : MonoBehaviour
 {
-    [SerializeField] private TMP_Text nameField;
+    [SerializeField] private TMP_InputField nameField;
     [SerializeField] private TMP_Text idField;
     [SerializeField] private TMP_Text emailField;
 
@@ -17,7 +17,7 @@ public class TeacherHomeManager : MonoBehaviour
     {
         idField.text = Database.instance.GetUsername();
         emailField.text = Database.instance.GetUserEmail() != null ? Database.instance.GetUserEmail() : "";
-        GetName();
+        GetSchoolData();
     }
 
     //Change Password
@@ -45,25 +45,28 @@ public class TeacherHomeManager : MonoBehaviour
         DesktopGraphics.instance.DisplayMessage("Error: " + error.GenerateErrorReport());
     }
 
-    private void GetName()
+    private void GetSchoolData()
     {
-        Database.instance.ReadData(Database.instance.GetUsername(), new Database.ReadDataCallback<TeacherInfoData>(GetNameCallback));
+        Database.instance.ReadData(Database.instance.GetUsername(), new Database.ReadDataCallback<SchoolInfoData>(GetSchoolDataCallback));
+        DesktopGraphics.instance.Loading(true);
     }
 
-    private void GetNameCallback(TeacherInfoData output)
+    private void GetSchoolDataCallback(SchoolInfoData output)
     {
         if (output == null)
         {
-            Debug.LogWarning("Couldn't find teacher");
+            Debug.LogWarning("Couldn't find school");
             return;
         }
 
-        nameField.text = output.teacherName;
+        nameField.text = output.schoolName;
+
+        DesktopGraphics.instance.Loading(false);
     }
 
     public void Logout()
     {
         Database.instance.LogoutUser();
-        SceneManager.LoadScene("TeacherLogin");
+        SceneManager.LoadScene("AdminLogin");
     }
 }
