@@ -23,17 +23,20 @@ public class TeacherInfoData : BasicData
         this.teacherId = teacherId;
         this.teacherName = teacherName;
         this.roster = roster;
-        for (int i = 0; i < 7; i++)
+        if (roster.Count < 7)
         {
-            roster.Add(new ListWrapper<string>());
-            roster[i].Add("Default");
-        }
-
-        foreach (ListWrapper<string> sublist in roster)
-        {
-            foreach (string entry in sublist.internalList)
+            for (int i = 0; i < 7; i++)
             {
-                Debug.Log(entry);
+                roster.Add(new ListWrapper<string>());
+                roster[i].Add("Default");
+            }
+
+            foreach (ListWrapper<string> sublist in roster)
+            {
+                foreach (string entry in sublist.internalList)
+                {
+                    Debug.Log(entry);
+                }
             }
         }
     }
