@@ -13,6 +13,22 @@ public class AdminHomeManager : MonoBehaviour
     [SerializeField] private TMP_Text idField;
     [SerializeField] private TMP_Text emailField;
 
+    public SchoolInfoData currentData;
+
+    public static AdminHomeManager instance { get; private set; }
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Debug.LogError("Multiple " + GetType() + "s in the scene");
+        }
+    }
+
     private void Start()
     {
         idField.text = Database.instance.GetUsername();
@@ -23,7 +39,6 @@ public class AdminHomeManager : MonoBehaviour
     //Change Password
     public void ResetPassword()
     {
-
         var request = new SendAccountRecoveryEmailRequest
         {
             Email = Database.instance.GetUserEmail(),
@@ -59,9 +74,18 @@ public class AdminHomeManager : MonoBehaviour
             return;
         }
 
-        nameField.text = output.schoolName;
+        currentData = output;
+
+        nameField.text = currentData.schoolName;
 
         DesktopGraphics.instance.Loading(false);
+    }
+
+    public void UpdateName()
+    {
+        currentData.schoolName = nameField.text;
+        Database.instance.SaveDataToFirebase(currentData);
+        DesktopGraphics.instance.DisplayMessage("Success");
     }
 
     public void Logout()

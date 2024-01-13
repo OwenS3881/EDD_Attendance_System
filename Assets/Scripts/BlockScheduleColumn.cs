@@ -27,9 +27,24 @@ public class BlockScheduleColumn : MonoBehaviour
 
     private void Start()
     {
-        Day = day;
+        Day = day;  
+    }
+
+    private void ClearTogglesContainer()
+    {
+        foreach (Transform t in blockTogglesContainer.GetComponentsInChildren<Transform>())
+        {
+            if (t.Equals(blockTogglesContainer.transform)) continue;
+
+            Destroy(t.gameObject);
+        }
 
         toggles = new BlockToggleContainer[7];
+    }
+
+    private void CreateNewToggles()
+    {
+        ClearTogglesContainer();
 
         for (int i = 0; i < 7; i++)
         {
@@ -41,6 +56,17 @@ public class BlockScheduleColumn : MonoBehaviour
 
     public void AssignSchedule(List<int> newSchedule)
     {
+        if (newSchedule == null)
+        {
+            Debug.LogError("No Schedule given");
+            return;
+        }
+
+        if (toggles == null || toggles.Length < 7)
+        {
+            CreateNewToggles();
+        }
+
         for (int i = 0; i < 7; i++)
         {
             toggles[i].SetState(newSchedule.Contains(i + 1));
