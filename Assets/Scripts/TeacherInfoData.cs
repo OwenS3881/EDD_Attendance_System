@@ -8,6 +8,7 @@ public class TeacherInfoData : BasicData
     public int teacherId;
     public string teacherName;
     public List<ListWrapper<string>> roster;
+    public int schoolId;
 
     public TeacherInfoData(TeacherInfoData clone)
     {
@@ -15,13 +16,15 @@ public class TeacherInfoData : BasicData
         this.teacherId = clone.teacherId;
         this.teacherName = clone.teacherName;
         this.roster = clone.roster;
+        this.schoolId = clone.schoolId;
     }
 
-    public TeacherInfoData(int teacherId, string teacherName, List<ListWrapper<string>> roster)
+    public TeacherInfoData(int teacherId, string teacherName, List<ListWrapper<string>> roster, int schoolId)
     {
         this.fileName = teacherId.ToString();
         this.teacherId = teacherId;
         this.teacherName = teacherName;
+        this.schoolId = schoolId;
         this.roster = roster;
         if (roster.Count < 7)
         {

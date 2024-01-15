@@ -14,10 +14,11 @@ public class StudentViewAttendanceManager : MonoBehaviour
     [SerializeField] private DateButton dayAttendanceDate;
     [SerializeField] private GameObject classAttendanceViewPrefab;
     [SerializeField] private GameObject classAttendanceViewContentParent;
-    private StudentInfoData currentDayStudent;
+    private StudentInfoData studentInfo;
     private StudentAttendanceEntryData currentDayStudentAttendance;
-    private bool foundStudentInfo;
-    private bool foundStudentAttendance;
+    [SerializeField] private GameObject noClassesGraphic;
+
+    private SchoolInfoData schoolData;
 
     private void Start()
     {
@@ -26,6 +27,49 @@ public class StudentViewAttendanceManager : MonoBehaviour
         {
             screen.SetActive(false);
         }
+
+        noClassesGraphic.SetActive(true);
+
+        GetData();
+    }
+
+    private void GetData()
+    {
+        MobileGraphics.instance.Loading(true);
+        Database.instance.ReadData(Database.instance.GetUsername(), new Database.ReadDataCallback<StudentInfoData>(GetStudentInfo));
+    }
+
+    private void GetStudentInfo(StudentInfoData output)
+    {
+        if (output == null)
+        {
+            MobileGraphics.instance.Loading(false);
+            Debug.LogWarning("Couldn't find StudentInfo");
+            return;
+        }
+
+        studentInfo = output;
+
+        GetSchoolData();
+    }
+
+    private void GetSchoolData()
+    {
+        Database.instance.ReadData(studentInfo.schoolId.ToString(), new Database.ReadDataCallback<SchoolInfoData>(GetSchoolDataCallback));
+    }
+
+    private void GetSchoolDataCallback(SchoolInfoData output)
+    {
+        if (output == null)
+        {
+            MobileGraphics.instance.Loading(false);
+            Debug.LogWarning("Couldn't find school");
+            return;
+        }
+
+        schoolData = output;
+
+        MobileGraphics.instance.Loading(false);
     }
 
     public void MainMenu()
@@ -36,23 +80,10 @@ public class StudentViewAttendanceManager : MonoBehaviour
     //Day Attendance
     public void SelectStudentDaySchedule()
     {
-        Database.instance.ReadData(Database.instance.GetUsername(), new Database.ReadDataCallback<StudentInfoData>(SelectStudentDayScheduleCallbackInfo));
         Database.instance.ReadData(Database.instance.GetUsername() + "*" + dayAttendanceDate.CurrentDate, new Database.ReadDataCallback<StudentAttendanceEntryData>(SelectStudentDayScheduleCallbackAttendance));
         MobileGraphics.instance.Loading(true);
     }
 
-    private void SelectStudentDayScheduleCallbackInfo(StudentInfoData output)
-    {
-        if (output == null)
-        {
-            Debug.LogWarning("Couldn't find StudentInfo");
-            return;
-        }
-
-        currentDayStudent = output;
-        foundStudentInfo = true;
-        FoundStudent();
-    }
 
     private void SelectStudentDayScheduleCallbackAttendance(StudentAttendanceEntryData output)
     {
@@ -65,46 +96,78 @@ public class StudentViewAttendanceManager : MonoBehaviour
             currentDayStudentAttendance = output;
         }
 
-
-        foundStudentAttendance = true;
         FoundStudent();
     }
 
     private void FoundStudent()
     {
-        if (!foundStudentAttendance || !foundStudentInfo) return;
-
         MobileGraphics.instance.Loading(false);
-
-        foundStudentAttendance = false;
-        foundStudentInfo = false;
 
         foreach (Transform child in classAttendanceViewContentParent.transform)
         {
             Destroy(child.gameObject);
         }
 
-        for (int i = 0; i < 7; i++)
+        List<int> periods = GetPeriods(dayAttendanceDate.CurrentDate);
+
+        foreach (int p in periods)
         {
 
             ClassAttendanceView viewBox = Instantiate(classAttendanceViewPrefab, classAttendanceViewContentParent.transform).GetComponent<ClassAttendanceView>();
 
-            viewBox.SetTeacherText(currentDayStudent.classList[i].ToString());
-            AddTeacherNameToIDField(currentDayStudent.classList[i], viewBox);
+            viewBox.SetTeacherText(studentInfo.classList[p - 1].ToString());
+            AddTeacherNameToIDField(studentInfo.classList[p - 1], viewBox);
 
-            if (!currentDayStudentAttendance.presentList.Contains(currentDayStudent.classList[i].ToString()))
+            if (!currentDayStudentAttendance.presentList.Contains(studentInfo.classList[p - 1].ToString()))
             {
                 viewBox.SetStatus(AttendanceStatus.Absent);
             }
-            else if (currentDayStudentAttendance.tardyList.Contains(currentDayStudent.classList[i].ToString()))
+            else if (currentDayStudentAttendance.tardyList.Contains(studentInfo.classList[p - 1].ToString()))
             {
                 viewBox.SetStatus(AttendanceStatus.Tardy);
             }
-            else if (currentDayStudentAttendance.presentList.Contains(currentDayStudent.classList[i].ToString()))
+            else if (currentDayStudentAttendance.presentList.Contains(studentInfo.classList[p - 1].ToString()))
             {
                 viewBox.SetStatus(AttendanceStatus.Present);
             }
         }
+
+        noClassesGraphic.SetActive(periods.Count == 0);
+    }
+
+    private List<int> GetPeriods(string date)
+    {
+        //check for overrides
+        foreach (ScheduledPeriods sp in schoolData.scheduleOverrides)
+        {
+            string[] splitDate = sp.date.Split("*");
+            if (splitDate.Length == 1) //single date
+            {
+                if (date.Equals(splitDate[0]))
+                {
+                    return sp.periods;
+                }
+            }
+            else if (splitDate.Length == 2) //date range
+            {
+                if (MyFunctions.IsDateInRange(date, splitDate[0], splitDate[1]))
+                {
+                    return sp.periods;
+                }
+            }
+        }
+
+        //check for block schedule
+        string dayOfWeek = MyFunctions.GetDayOfWeek(date).ToLower();    
+        foreach (ScheduledPeriods sp in schoolData.blockSchedule)
+        {
+            if (sp.date.ToLower().Equals(dayOfWeek))
+            {
+                return sp.periods;
+            }
+        }
+
+        return new List<int>();
     }
 
     private void AddTeacherNameToIDField(int teacherId, ClassAttendanceView viewBox)

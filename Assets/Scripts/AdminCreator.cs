@@ -70,7 +70,7 @@ public class AdminCreator : MonoBehaviour
     //Teacher Creation Methods
     public void CreateTeacher()
     {
-        TeacherInfoData newTeacher = new TeacherInfoData(Int32.Parse(teacherIdInput.text), teacherNameInput.text, new List<ListWrapper<string>>());
+        TeacherInfoData newTeacher = new TeacherInfoData(Int32.Parse(teacherIdInput.text), teacherNameInput.text, new List<ListWrapper<string>>(), Int32.Parse(Database.instance.GetUsername()));
         Database.instance.SaveDataToFirebase(newTeacher);
     }
 
@@ -91,7 +91,7 @@ public class AdminCreator : MonoBehaviour
         int studentId = Int32.Parse(studentIdInput.text);
         string studentName = studentNameInput.text;
 
-        StudentInfoData newStudent = new StudentInfoData(studentId, studentName, teacherIds);
+        StudentInfoData newStudent = new StudentInfoData(studentId, studentName, teacherIds, Int32.Parse(Database.instance.GetUsername()));
         Database.instance.SaveDataToFirebase(newStudent);
 
         StartCoroutine(AddStudentToRoster(studentId, teacherIds, 0));

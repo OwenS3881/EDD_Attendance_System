@@ -142,7 +142,7 @@ public class AdminScheduleManager : MonoBehaviour
         ScheduleOverrideRow newOverride = Instantiate(scheduleOverridePrefab, scheduleOverridesContainer.transform).GetComponent<ScheduleOverrideRow>();
 
         newOverride.UpdateRangeToggle(false);
-        newOverride.AssignSchedule(new List<int>() { 1, 2, 3, 4, 5, 6, 7 });
+        newOverride.AssignSchedule(new List<int>());
 
         scheduleOverrides.Add(newOverride);
 

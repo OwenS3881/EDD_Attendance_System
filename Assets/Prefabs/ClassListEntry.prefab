@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Period 1 - 999001 - Hovel
+  m_text: ??? - ??? - ???
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 39d4e041f30db4b94a13bcfd6e297a4a, type: 2}
   m_sharedMaterial: {fileID: -3555052767301912435, guid: 39d4e041f30db4b94a13bcfd6e297a4a, type: 2}
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 66.65
+  m_fontSize: 0
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
