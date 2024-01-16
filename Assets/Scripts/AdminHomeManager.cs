@@ -60,7 +60,7 @@ public class AdminHomeManager : MonoBehaviour
         DesktopGraphics.instance.DisplayMessage("Error: " + error.GenerateErrorReport());
     }
 
-    private void GetSchoolData()
+    public void GetSchoolData()
     {
         Database.instance.ReadData(Database.instance.GetUsername(), new Database.ReadDataCallback<SchoolInfoData>(GetSchoolDataCallback));
         DesktopGraphics.instance.Loading(true);

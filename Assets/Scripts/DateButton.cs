@@ -12,7 +12,7 @@ public class DateButton : MonoBehaviour
 
     public UnityEvent OnSelect;
 
-    private string[] monthAbbreviations = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    private static string[] monthAbbreviations = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     private string currentDate;
     public string CurrentDate
@@ -33,16 +33,21 @@ public class DateButton : MonoBehaviour
 
             currentDate = value;
 
-            string[] splitDate = currentDate.Split('-');
-
-            string year = splitDate[0];
-            string month = monthAbbreviations[Int32.Parse(splitDate[1]) - 1];
-            string day = Int32.Parse(splitDate[2]).ToString();
-
-            dateLabel.text = $"{month} {day}, {year}";
+            dateLabel.text = ConvertToNiceDate(currentDate);
 
             OnSelect.Invoke();
         }
+    }
+
+    public static string ConvertToNiceDate(string date)
+    {
+        string[] splitDate = date.Split('-');
+
+        string year = splitDate[0];
+        string month = monthAbbreviations[Int32.Parse(splitDate[1]) - 1];
+        string day = Int32.Parse(splitDate[2]).ToString();
+
+        return ($"{month} {day}, {year}");
     }
 
     public void SelectDateMobile()
