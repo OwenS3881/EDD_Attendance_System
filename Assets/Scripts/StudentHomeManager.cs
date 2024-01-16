@@ -20,6 +20,11 @@ public class StudentHomeManager : MonoBehaviour
         SceneManager.LoadScene("MobileAccountInfo");
     }
 
+    public void ExcuseRequest()
+    {
+        SceneManager.LoadScene("MobileExcuseRequest");
+    }
+
     public void Logout()
     {
         Database.instance.LogoutUser();

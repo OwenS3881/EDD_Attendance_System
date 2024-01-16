@@ -11,6 +11,7 @@ public class SchoolInfoData : BasicData
     public List<string> studentList;
     public List<ScheduledPeriods> blockSchedule; //contains periods that will occur on each day
     public List<ScheduledPeriods> scheduleOverrides; //set periods for days with alternate schedules; for days off, set the periods list to null/empty
+    public List<AttendanceExcuseRequest> excuseRequests;
 
     public SchoolInfoData(SchoolInfoData clone)
     {
@@ -21,9 +22,10 @@ public class SchoolInfoData : BasicData
         this.studentList = clone.studentList;
         this.blockSchedule = clone.blockSchedule;
         this.scheduleOverrides = clone.scheduleOverrides;
+        this.excuseRequests = clone.excuseRequests;
     }
 
-    public SchoolInfoData(int schoolId, string schoolName, List<string> teacherList, List<string> studentList, List<ScheduledPeriods> blockSchedule, List<ScheduledPeriods> scheduleOverrides)
+    public SchoolInfoData(int schoolId, string schoolName, List<string> teacherList, List<string> studentList, List<ScheduledPeriods> blockSchedule, List<ScheduledPeriods> scheduleOverrides, List<AttendanceExcuseRequest> excuseRequests)
     {
         this.fileName = schoolId.ToString();
         this.schoolId = schoolId;
@@ -32,6 +34,7 @@ public class SchoolInfoData : BasicData
         this.studentList = studentList;
         this.blockSchedule = blockSchedule;
         this.scheduleOverrides = scheduleOverrides;
+        this.excuseRequests = excuseRequests;
 
         if (blockSchedule.Count < 7)
         {
