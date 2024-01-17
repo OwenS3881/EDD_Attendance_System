@@ -152,7 +152,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
 
         if (schoolInfo.excuseRequests == null) schoolInfo.excuseRequests = new List<AttendanceExcuseRequest>();
 
-        AttendanceExcuseRequest newRequest = new AttendanceExcuseRequest(Int32.Parse(Database.instance.GetUsername()), selectedTeacher, dateButton.CurrentDate, reasonInput.text);
+        AttendanceExcuseRequest newRequest = new AttendanceExcuseRequest(Int32.Parse(Database.instance.GetUsername()), selectedTeacher, dateButton.CurrentDate, reasonInput.text, false);
         schoolInfo.excuseRequests.Add(newRequest);
         Database.instance.SaveDataToFirebase(schoolInfo);
         MobileGraphics.instance.DisplayMessage("Success");

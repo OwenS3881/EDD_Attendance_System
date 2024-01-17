@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class AdminExcuseRequestManager : MonoBehaviour
+public class TeacherExcuseRequestManager : MonoBehaviour
 {
-    public static AdminExcuseRequestManager instance { get; private set; }
+    public static TeacherExcuseRequestManager instance { get; private set; }
+
+    private SchoolInfoData schoolData;
 
     [SerializeField] private GameObject mainScrollView;
     [SerializeField] private GameObject decisionScrollView;
@@ -18,13 +20,11 @@ public class AdminExcuseRequestManager : MonoBehaviour
 
     [Header("Decision View")]
     [SerializeField] private TMP_Text studentField;
-    [SerializeField] private TMP_Text teacherField;
     [SerializeField] private TMP_Text dateField;
     [SerializeField] private TMP_Text reasonField;
-    [SerializeField] private GameObject teacherDenyDisplay;
     private AttendanceExcuseRequest currentRequest;
 
-    private List<PendingExcuseRequest> requestObjects = new List<PendingExcuseRequest>();
+    private List<PendingTeacherExcuseRequest> requestObjects = new List<PendingTeacherExcuseRequest>();
 
     private void Awake()
     {
@@ -38,11 +38,35 @@ public class AdminExcuseRequestManager : MonoBehaviour
         }
     }
 
+    public void GetSchoolData()
+    {
+        if (TeacherHomeManager.instance == null || TeacherHomeManager.instance.GetSchoolId() == 0) return;
+
+        Database.instance.ReadData(TeacherHomeManager.instance.GetSchoolId().ToString(), new Database.ReadDataCallback<SchoolInfoData>(GetSchoolDataCallback));
+        DesktopGraphics.instance.Loading(true);
+    }
+
+    private void GetSchoolDataCallback(SchoolInfoData output)
+    {
+        if (output == null)
+        {
+            Debug.LogWarning("Couldn't find school");
+            return;
+        }
+
+        schoolData = output;
+
+        DisplayRequests();
+
+        DesktopGraphics.instance.Loading(false);
+    }
+
     private void OnEnable()
     {
         mainScrollView.SetActive(true);
         decisionScrollView.SetActive(false);
         currentRequest = null;
+        if (schoolData == null) GetSchoolData();
         DisplayRequests();
     }
 
@@ -52,13 +76,10 @@ public class AdminExcuseRequestManager : MonoBehaviour
         decisionScrollView.SetActive(true);
 
         studentField.text = selectedRequest.studentId.ToString();
-        teacherField.text = selectedRequest.teacherId.ToString();
         dateField.text = DateButton.ConvertToNiceDate(selectedRequest.date);
         reasonField.text = selectedRequest.reason;
-        teacherDenyDisplay.SetActive(selectedRequest.teacherDenied);
 
         AddStudentName(selectedRequest.studentId, studentField);
-        AddTeacherName(selectedRequest.teacherId, teacherField);
 
         currentRequest = selectedRequest;
     }
@@ -81,24 +102,6 @@ public class AdminExcuseRequestManager : MonoBehaviour
         field.text = output.studentId + " - " + output.studentName;
     }
 
-    private void AddTeacherName(int teacherId, TMP_Text field)
-    {
-        Database.instance.ReadData(teacherId.ToString(), new Database.ReadDataCallbackParams<TeacherInfoData>(AddTeacherNameCallback), new object[] { field });
-    }
-
-    private void AddTeacherNameCallback(TeacherInfoData output, object[] additionalParams)
-    {
-        if (output == null)
-        {
-            Debug.LogWarning("Couldn't find teacher");
-            return;
-        }
-
-        TMP_Text field = (TMP_Text)additionalParams[0];
-
-        field.text = output.teacherId + " - " + output.teacherName;
-    }
-
     private void ClearPendingContainer()
     {
         foreach (Transform t in pendingExcuseRequestsContainer.GetComponentsInChildren<Transform>())
@@ -108,7 +111,7 @@ public class AdminExcuseRequestManager : MonoBehaviour
             Destroy(t.gameObject);
         }
 
-        requestObjects = new List<PendingExcuseRequest>();
+        requestObjects = new List<PendingTeacherExcuseRequest>();
 
         AdjustPendingContainer();
     }
@@ -120,15 +123,19 @@ public class AdminExcuseRequestManager : MonoBehaviour
 
     public void DisplayRequests()
     {
-        if (AdminHomeManager.instance == null || AdminHomeManager.instance.currentData == null) return;
+        if (schoolData == null) return;
 
         ClearPendingContainer();
 
-        for (int i = 0; i < AdminHomeManager.instance.currentData.excuseRequests.Count; i++)
+        for (int i = 0; i < schoolData.excuseRequests.Count; i++)
         {
-            PendingExcuseRequest newRequest = Instantiate(pendingExcuseRequestPrefab, pendingExcuseRequestsContainer.transform).GetComponent<PendingExcuseRequest>();
+            if (!schoolData.excuseRequests[i].teacherId.ToString().Equals(Database.instance.GetUsername())) continue;
 
-            newRequest.AssignRequest(AdminHomeManager.instance.currentData.excuseRequests[i]);
+            if (schoolData.excuseRequests[i].teacherDenied) continue;
+
+            PendingTeacherExcuseRequest newRequest = Instantiate(pendingExcuseRequestPrefab, pendingExcuseRequestsContainer.transform).GetComponent<PendingTeacherExcuseRequest>();
+
+            newRequest.AssignRequest(schoolData.excuseRequests[i]);
 
             requestObjects.Add(newRequest);
         }
@@ -140,8 +147,8 @@ public class AdminExcuseRequestManager : MonoBehaviour
     {
         AdminCreator.MarkPresent(currentRequest.studentId, currentRequest.teacherId, currentRequest.date, false);
 
-        AdminHomeManager.instance.currentData.excuseRequests.Remove(currentRequest);
-        Database.instance.SaveDataToFirebase(AdminHomeManager.instance.currentData);
+        schoolData.excuseRequests.Remove(currentRequest);
+        Database.instance.SaveDataToFirebase(schoolData);
 
         OnEnable();
     }
@@ -153,8 +160,8 @@ public class AdminExcuseRequestManager : MonoBehaviour
 
     public void Deny()
     {
-        AdminHomeManager.instance.currentData.excuseRequests.Remove(currentRequest);
-        Database.instance.SaveDataToFirebase(AdminHomeManager.instance.currentData);
+        schoolData.excuseRequests[schoolData.excuseRequests.IndexOf(currentRequest)].teacherDenied = true;
+        Database.instance.SaveDataToFirebase(schoolData);
 
         OnEnable();
     }

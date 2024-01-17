@@ -9,15 +9,36 @@ using PlayFab.ClientModels;
 
 public class TeacherHomeManager : MonoBehaviour
 {
+    public static TeacherHomeManager instance { get; private set; }
+
     [SerializeField] private TMP_Text nameField;
     [SerializeField] private TMP_Text idField;
     [SerializeField] private TMP_Text emailField;
+
+    private int schoolId;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Debug.LogError($"Multiple {GetType()}s in the scene");
+        }
+    }
 
     private void Start()
     {
         idField.text = Database.instance.GetUsername();
         emailField.text = Database.instance.GetUserEmail() != null ? Database.instance.GetUserEmail() : "";
         GetName();
+    }
+
+    public int GetSchoolId()
+    {
+        return schoolId;
     }
 
     //Change Password
@@ -57,6 +78,8 @@ public class TeacherHomeManager : MonoBehaviour
             Debug.LogWarning("Couldn't find teacher");
             return;
         }
+
+        schoolId = output.schoolId;
 
         nameField.text = output.teacherName;
     }
