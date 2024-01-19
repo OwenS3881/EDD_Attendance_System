@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using PlayFab;
 using PlayFab.ClientModels;
+using UnityEngine.SceneManagement;
 
 public class Database : MonoBehaviour
 {
@@ -24,6 +25,29 @@ public class Database : MonoBehaviour
         }
         get
         {
+            if (currentUser == null)
+            {
+                if (SceneManager.GetActiveScene().name.Contains("Admin"))
+                {
+                    SceneManager.LoadScene("AdminLogin");
+                    return null;
+                }
+                else if (SceneManager.GetActiveScene().name.Contains("Teacher"))
+                {
+                    SceneManager.LoadScene("TeacherLogin");
+                    return null;
+                }
+                else if (SceneManager.GetActiveScene().name.Contains("Mobile"))
+                {
+                    SceneManager.LoadScene("MobileLogin");
+                    return null;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
             return currentUser;
         }
     }

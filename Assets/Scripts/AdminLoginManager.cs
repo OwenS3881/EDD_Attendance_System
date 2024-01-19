@@ -157,7 +157,7 @@ public class AdminLoginManager : MonoBehaviour
         };
         PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnError);
 
-        SchoolInfoData newSchool = new SchoolInfoData (Int32.Parse(createIdInput.text), "New School", new List<string>(),new List<string>(), new List<ScheduledPeriods>(),new List<ScheduledPeriods>(), new List<AttendanceExcuseRequest>());
+        SchoolInfoData newSchool = new SchoolInfoData (Int32.Parse(createIdInput.text), "New School", new List<int>(),new List<int>(), new List<ScheduledPeriods>(),new List<ScheduledPeriods>(), new List<AttendanceExcuseRequest>());
         Database.instance.SaveDataToFirebase(newSchool);
     }
 

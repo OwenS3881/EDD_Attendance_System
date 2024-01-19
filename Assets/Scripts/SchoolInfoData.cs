@@ -7,8 +7,8 @@ public class SchoolInfoData : BasicData
 {
     public int schoolId;
     public string schoolName;
-    public List<string> teacherList;
-    public List<string> studentList;
+    public List<int> teacherList;
+    public List<int> studentList;
     public List<ScheduledPeriods> blockSchedule; //contains periods that will occur on each day
     public List<ScheduledPeriods> scheduleOverrides; //set periods for days with alternate schedules; for days off, set the periods list to null/empty
     public List<AttendanceExcuseRequest> excuseRequests;
@@ -25,7 +25,7 @@ public class SchoolInfoData : BasicData
         this.excuseRequests = clone.excuseRequests;
     }
 
-    public SchoolInfoData(int schoolId, string schoolName, List<string> teacherList, List<string> studentList, List<ScheduledPeriods> blockSchedule, List<ScheduledPeriods> scheduleOverrides, List<AttendanceExcuseRequest> excuseRequests)
+    public SchoolInfoData(int schoolId, string schoolName, List<int> teacherList, List<int> studentList, List<ScheduledPeriods> blockSchedule, List<ScheduledPeriods> scheduleOverrides, List<AttendanceExcuseRequest> excuseRequests)
     {
         this.fileName = schoolId.ToString();
         this.schoolId = schoolId;
