@@ -24,6 +24,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MobileExcuseRequest.unity
     guid: 576d6007a6a724c26ad66e6f52a73a52
   - enabled: 1
+    path: Assets/Scenes/MobileFreePeriod.unity
+    guid: d85a1468eced046e98f1f1ae96e5cf8c
+  - enabled: 1
     path: Assets/Scenes/TeacherLogin.unity
     guid: 2f322bf0c0d943e4998f25ff736f5711
   - enabled: 1

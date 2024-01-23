@@ -110,6 +110,12 @@ public class TeacherLoginManager : MonoBehaviour
             return;
         }
 
+        if (createEmailInput.text.Equals(Database.freePeriodId.ToString()))
+        {
+            OutputMessage("Invalid ID");
+            return;
+        }
+
         if (string.IsNullOrEmpty(createPasswordInput.text))
         {
             OutputMessage("Please enter a password");

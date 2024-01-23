@@ -2180,7 +2180,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 570964777}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.7598436
+  m_Size: 0.20000005
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2236,7 +2236,7 @@ GameObject:
   - component: {fileID: 1477333339}
   - component: {fileID: 1477333338}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: FreePeriodButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2305,7 +2305,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1477333339}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1367052286}
+        m_TargetAssemblyTypeName: StudentHomeManager, Assembly-CSharp
+        m_MethodName: FreePeriod
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1477333339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2401,7 +2413,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Checkout
+  m_text: Free Period
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 39d4e041f30db4b94a13bcfd6e297a4a, type: 2}
   m_sharedMaterial: {fileID: -3555052767301912435, guid: 39d4e041f30db4b94a13bcfd6e297a4a, type: 2}
@@ -2428,7 +2440,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 66.25
+  m_fontSize: 100.3
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1

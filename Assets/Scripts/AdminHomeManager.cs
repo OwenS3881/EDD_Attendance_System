@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using PlayFab;
 using PlayFab.ClientModels;
+using System;
 
 public class AdminHomeManager : MonoBehaviour
 {
@@ -78,7 +79,17 @@ public class AdminHomeManager : MonoBehaviour
 
         nameField.text = currentData.schoolName;
 
+        InitializeFreePeriod();
+
         DesktopGraphics.instance.Loading(false);
+    }
+
+    private void InitializeFreePeriod()
+    {
+        if (currentData.teacherList.Contains(Database.freePeriodId)) return;
+
+        TeacherInfoData freePeriod = new TeacherInfoData(Database.freePeriodId, "FREE", new List<ListWrapper<string>>(), Int32.Parse(Database.instance.GetUsername()));
+        Database.instance.SaveDataToFirebase(freePeriod);
     }
 
     public void UpdateName()

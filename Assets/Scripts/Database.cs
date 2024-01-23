@@ -12,6 +12,8 @@ public class Database : MonoBehaviour
 {
     public static Database instance { get; private set; }
 
+    public static readonly int freePeriodId = 0;
+
     [SerializeField] private string databaseURL = "";
 
     private LoginResult currentUser;

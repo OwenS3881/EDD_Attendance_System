@@ -32,6 +32,24 @@ public class AdminUsersManager : MonoBehaviour
     //Teacher Creation Methods
     public void CreateTeacher()
     {
+        if (string.IsNullOrEmpty(teacherIdInput.text))
+        {
+            DesktopGraphics.instance.DisplayMessage("Please enter a teacher ID");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(teacherNameInput.text))
+        {
+            DesktopGraphics.instance.DisplayMessage("Please enter a teacher name");
+            return;
+        }
+
+        if (AdminHomeManager.instance.currentData.teacherList.Contains(Int32.Parse(teacherIdInput.text)))
+        {
+            DesktopGraphics.instance.DisplayMessage("Teacher ID already exists");
+            return;
+        }
+
         TeacherInfoData newTeacher = new TeacherInfoData(Int32.Parse(teacherIdInput.text), teacherNameInput.text, new List<ListWrapper<string>>(), Int32.Parse(Database.instance.GetUsername()));
         Database.instance.SaveDataToFirebase(newTeacher);
         DesktopGraphics.instance.DisplayMessage("Success");
@@ -53,6 +71,13 @@ public class AdminUsersManager : MonoBehaviour
         if (string.IsNullOrEmpty(studentNameInput.text))
         {
             DesktopGraphics.instance.DisplayMessage("Please enter a student name");
+            DesktopGraphics.instance.Loading(false);
+            return;
+        }
+
+        if (AdminHomeManager.instance.currentData.studentList.Contains(Int32.Parse(studentIdInput.text)))
+        {
+            DesktopGraphics.instance.DisplayMessage("Student ID already exists");
             DesktopGraphics.instance.Loading(false);
             return;
         }

@@ -29,6 +29,7 @@ public class MobileLoginManager : MonoBehaviour
         {
             screen.SetActive(false);
         }
+        MobileGraphics.instance.Loading(false);
     }
 
     public void OutputMessage(string message)
