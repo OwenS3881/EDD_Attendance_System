@@ -12,9 +12,9 @@ public class Database : MonoBehaviour
 {
     public static Database instance { get; private set; }
 
-    public static readonly int freePeriodId = 0;
-
     [SerializeField] private string databaseURL = "";
+
+    public static readonly List<int> freePeriodIds = new List<int>() { 1, 2, 3, 4, 5, 6, 7 };
 
     private LoginResult currentUser;
     public LoginResult CurrentUser
@@ -113,7 +113,15 @@ public class Database : MonoBehaviour
 
     public string GetUsername()
     {
-        return CurrentUser.InfoResultPayload.AccountInfo.Username;
+        try
+        {
+            return CurrentUser.InfoResultPayload.AccountInfo.Username;
+        }
+        catch
+        {
+            Debug.Log("Loading login scene...");
+            return "";
+        }
     }
 
     public string GetUserEmail()

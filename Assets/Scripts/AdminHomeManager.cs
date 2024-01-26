@@ -79,17 +79,20 @@ public class AdminHomeManager : MonoBehaviour
 
         nameField.text = currentData.schoolName;
 
-        InitializeFreePeriod();
+        InitializeFreePeriods();
 
         DesktopGraphics.instance.Loading(false);
     }
 
-    private void InitializeFreePeriod()
+    private void InitializeFreePeriods()
     {
-        if (currentData.teacherList.Contains(Database.freePeriodId)) return;
+        if (currentData.teacherList.Contains(1)) return;
 
-        TeacherInfoData freePeriod = new TeacherInfoData(Database.freePeriodId, "FREE", new List<ListWrapper<string>>(), Int32.Parse(Database.instance.GetUsername()));
-        Database.instance.SaveDataToFirebase(freePeriod);
+        foreach (int i in Database.freePeriodIds)
+        {
+            TeacherInfoData freePeriod = new TeacherInfoData(i, $"FREE-{i}", new List<ListWrapper<string>>(), Int32.Parse(Database.instance.GetUsername()));
+            Database.instance.SaveDataToFirebase(freePeriod);
+        } 
     }
 
     public void UpdateName()
