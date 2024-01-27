@@ -15,6 +15,8 @@ public class Database : MonoBehaviour
     [SerializeField] private string databaseURL = "";
 
     public static readonly List<int> freePeriodIds = new List<int>() { 1, 2, 3, 4, 5, 6, 7 };
+    public static readonly List<int> checkInIds = new List<int>() { 1, 2, 3, 4 };
+    public static readonly List<int> checkOutIds = new List<int>() { 5, 6, 7 };
 
     private LoginResult currentUser;
     public LoginResult CurrentUser
