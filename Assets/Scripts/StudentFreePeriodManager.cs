@@ -24,6 +24,7 @@ public class StudentFreePeriodManager : MonoBehaviour
     [SerializeField] private TMP_Text periodText;
     [SerializeField] private GameObject checkInButton;
     [SerializeField] private GameObject checkOutButton;
+    [SerializeField] private GameObject passIssuedGraphic;
     private int selectedPeriod;
 
     private string currentDate = DateTime.Now.ToString("yyyy-MM-dd");
@@ -32,8 +33,6 @@ public class StudentFreePeriodManager : MonoBehaviour
     {
         mainScrollView.SetActive(true);
         passScrollView.SetActive(false);
-
-        currentDate = "2024-01-31";
 
         GetData();
     }
@@ -161,26 +160,44 @@ public class StudentFreePeriodManager : MonoBehaviour
     {
         selectedPeriod = period;
 
-        checkInButton.SetActive(Database.checkInIds.Contains(period));
-        checkOutButton.SetActive(Database.checkOutIds.Contains(period));
+        checkInButton.SetActive(Database.checkInIds.Contains(period) && !attendanceData.presentList.Contains(selectedPeriod.ToString()));
+        checkOutButton.SetActive(Database.checkOutIds.Contains(period) && !attendanceData.presentList.Contains(selectedPeriod.ToString()));
 
         mainScrollView.SetActive(false);
         passScrollView.SetActive(true);
 
         dateText.text = DateButton.ConvertToNiceDate(currentDate);
         periodText.text = period.ToString();
+
+        passIssuedGraphic.SetActive(attendanceData.presentList.Contains(selectedPeriod.ToString()));     
     }
 
     public void CheckIn()
     {
         MobileGraphics.instance.DisplayMessage("Enjoy your day!");
+        MarkPass();
     }
 
     public void Checkout()
     {
         confettiParticles.Play();
         MobileGraphics.instance.DisplayMessage("Bye!");
+        MarkPass();
     }
+
+    private void MarkPass()
+    {
+        if (attendanceData.presentList.Contains(selectedPeriod.ToString())) return;
+
+        attendanceData.presentList.Add(selectedPeriod.ToString());
+
+        passIssuedGraphic.SetActive(true);
+        checkInButton.SetActive(false);
+        checkOutButton.SetActive(false);
+
+        Database.instance.SaveDataToFirebase(attendanceData);
+    }
+
     private List<int> GetPeriods(string date)
     {
         //check for overrides
