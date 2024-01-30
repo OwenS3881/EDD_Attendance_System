@@ -18,6 +18,16 @@ public class StudentViewAttendanceManager : MonoBehaviour
     private StudentAttendanceEntryData currentDayStudentAttendance;
     [SerializeField] private GameObject noClassesGraphic;
 
+    [Header("Date Range Attendance Fields")]
+    [SerializeField] private GameObject dateRangeContentParent;
+    [SerializeField] private float dateRangeContentDefaultHeight;
+    [SerializeField] private float dateRangeContainerHeight;
+    [SerializeField] private GameObject dateRangeAttendanceContainerPrefab;
+    [SerializeField] private DateButton startDate;
+    [SerializeField] private DateButton endDate;
+    private List<string> dateRanges = new List<string>();
+    private List<StudentAttendanceEntryData> attendanceRangeDatas = new List<StudentAttendanceEntryData>();
+
     private SchoolInfoData schoolData;
 
     private void Start()
@@ -27,6 +37,8 @@ public class StudentViewAttendanceManager : MonoBehaviour
         {
             screen.SetActive(false);
         }
+
+        ClearRangesContainer();
 
         noClassesGraphic.SetActive(true);
 
@@ -186,5 +198,119 @@ public class StudentViewAttendanceManager : MonoBehaviour
         ClassAttendanceView viewBox = (ClassAttendanceView)additionalParams[0];
 
         viewBox.SetTeacherText(output.teacherId + " - " + output.teacherName);
+    }
+
+    //Date Range Attendance
+    public string GetDateRange()
+    {
+        if (string.IsNullOrEmpty(startDate.CurrentDate) || string.IsNullOrEmpty(endDate.CurrentDate))
+        {
+            MobileGraphics.instance.DisplayMessage("Fill out all dates");
+            return null;
+        }
+
+        if (!MyFunctions.VerifyDateOrder(startDate.CurrentDate, endDate.CurrentDate))
+        {
+            MobileGraphics.instance.DisplayMessage("Invalid date range, 1st date must come before 2nd date");
+            return null;
+        }
+
+        return startDate.CurrentDate + "*" + endDate.CurrentDate;
+    }
+
+    public void OnDateSet()
+    {
+        if (!string.IsNullOrEmpty(startDate.CurrentDate) && !string.IsNullOrEmpty(endDate.CurrentDate) && !MyFunctions.VerifyDateOrder(startDate.CurrentDate, endDate.CurrentDate))
+        {
+            MobileGraphics.instance.DisplayMessage("Invalid date range, 1st date must come before 2nd date");
+            endDate.CurrentDate = startDate.CurrentDate;
+        }
+    }
+
+    private void ClearRangesContainer()
+    {
+        foreach (Transform t in dateRangeContentParent.GetComponentsInChildren<Transform>())
+        {
+            if (t.Equals(dateRangeContentParent.transform)) continue;
+
+            Destroy(t.gameObject);
+        }
+
+        attendanceRangeDatas.Clear();
+
+        UpdateDateRangeContentParentHeight();
+    }
+
+    private void UpdateDateRangeContentParentHeight()
+    {
+        dateRangeContentParent.GetComponent<RectTransform>().sizeDelta = new Vector2(dateRangeContentParent.GetComponent<RectTransform>().sizeDelta.x, dateRangeContentDefaultHeight + (attendanceRangeDatas.Count * dateRangeContainerHeight));
+    }
+
+    public void LoadDateRange()
+    {
+        if (string.IsNullOrEmpty(GetDateRange())) return;
+
+        MobileGraphics.instance.Loading(true);
+
+        dateRanges = MyFunctions.GetDateRange(startDate.CurrentDate, endDate.CurrentDate);
+
+        ClearRangesContainer();
+
+        foreach (string date in dateRanges)
+        {
+            GetDayAttendance(date);
+        }
+    }
+
+    public void GetDayAttendance(string date)
+    {
+        Database.instance.ReadData(Database.instance.GetUsername() + "*" + date, new Database.ReadDataCallbackParams<StudentAttendanceEntryData>(GetDayAttendanceCallback), new object[] { date });
+    }
+
+    private void GetDayAttendanceCallback(StudentAttendanceEntryData output, object[] additionalParams)
+    {
+        string date = (string)additionalParams[0];
+        StudentAttendanceEntryData newData = null;
+
+        if (output == null)
+        {
+            newData = new StudentAttendanceEntryData(Int32.Parse(Database.instance.GetUsername()), date, new List<string>(), new List<string>());
+        }
+        else
+        {
+            newData = output;
+        }
+
+        attendanceRangeDatas.Add(newData);
+
+        LoadedAllDates();
+    }
+
+    private void LoadedAllDates()
+    {
+        if (attendanceRangeDatas.Count < dateRanges.Count) return;
+
+        attendanceRangeDatas.Sort(delegate (StudentAttendanceEntryData s1, StudentAttendanceEntryData s2)
+        {
+            return s1.date.CompareTo(s2.date);
+        });
+
+        foreach (StudentAttendanceEntryData data in attendanceRangeDatas)
+        {
+            DateRangeAttendanceContainer newContainer = Instantiate(dateRangeAttendanceContainerPrefab, dateRangeContentParent.transform).GetComponent<DateRangeAttendanceContainer>();
+
+            newContainer.AssignDate(data.date);
+
+            List<int> periods = GetPeriods(data.date);
+            int present = data.presentList.Count;
+            int tardy = data.tardyList.Count;
+
+            newContainer.SetPresentBar(present - tardy, periods.Count);
+            newContainer.SetTardyBar(present, periods.Count);
+        }
+
+        UpdateDateRangeContentParentHeight();
+
+        MobileGraphics.instance.Loading(false);
     }
 }
