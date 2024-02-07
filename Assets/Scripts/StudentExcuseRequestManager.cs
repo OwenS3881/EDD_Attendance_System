@@ -131,7 +131,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
 
         if (output != null)
         {
-            if (output.presentList.Contains(selectedTeacher.ToString()))
+            if (output.presentList.Contains(selectedTeacher.ToString()) && !output.tardyList.Contains(selectedTeacher.ToString()))
             {
                 MobileGraphics.instance.DisplayMessage("Already present for this day");
                 MobileGraphics.instance.Loading(false);

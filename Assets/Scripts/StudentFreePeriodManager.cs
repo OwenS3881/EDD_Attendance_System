@@ -185,6 +185,13 @@ public class StudentFreePeriodManager : MonoBehaviour
         MarkPass();
     }
 
+    public void PassPressed()
+    {
+        if (!Database.checkOutIds.Contains(Int32.Parse(periodText.text))) return;
+
+        confettiParticles.Play();
+    }
+
     private void MarkPass()
     {
         if (attendanceData.presentList.Contains(selectedPeriod.ToString())) return;
