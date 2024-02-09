@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
+using TMPro;
 
 public class StudentViewAttendanceManager : MonoBehaviour
 {
@@ -28,6 +29,21 @@ public class StudentViewAttendanceManager : MonoBehaviour
     private List<string> dateRanges = new List<string>();
     private List<StudentAttendanceEntryData> attendanceRangeDatas = new List<StudentAttendanceEntryData>();
 
+    [Header("Absent Range Fields")]
+    [SerializeField] private GameObject absentDateRangeContentParent;
+    [SerializeField] private float absentDateRangeContentDefaultHeight;
+    [SerializeField] private float absentDateRangeContainerHeight;
+    [SerializeField] private GameObject absentDateRangeAttendanceContainerPrefab;
+    [SerializeField] private DateButton absentStartDate;
+    [SerializeField] private DateButton absentEndDate;
+    private List<string> absentDateRanges = new List<string>();
+    private List<StudentAttendanceEntryData> absentAttendanceRangeDatas = new List<StudentAttendanceEntryData>();
+    private int absentCount;
+    private int tardyCount;
+    private int totalCount;
+    [SerializeField] private TMP_Text absentCountText;
+    [SerializeField] private TMP_Text tardyCountText;
+
     private SchoolInfoData schoolData;
 
     private void Start()
@@ -39,8 +55,12 @@ public class StudentViewAttendanceManager : MonoBehaviour
         }
 
         ClearRangesContainer();
+        ClearAbsentRangesContainer();
 
         noClassesGraphic.SetActive(true);
+
+        absentCountText.gameObject.SetActive(false);
+        tardyCountText.gameObject.SetActive(false);
 
         GetData();
     }
@@ -310,6 +330,151 @@ public class StudentViewAttendanceManager : MonoBehaviour
         }
 
         UpdateDateRangeContentParentHeight();
+
+        MobileGraphics.instance.Loading(false);
+    }
+
+    //Date Range Attendance
+    public string GetAbsentDateRange()
+    {
+        if (string.IsNullOrEmpty(absentStartDate.CurrentDate) || string.IsNullOrEmpty(absentEndDate.CurrentDate))
+        {
+            MobileGraphics.instance.DisplayMessage("Fill out all dates");
+            return null;
+        }
+
+        if (!MyFunctions.VerifyDateOrder(absentStartDate.CurrentDate, absentEndDate.CurrentDate))
+        {
+            MobileGraphics.instance.DisplayMessage("Invalid date range, 1st date must come before 2nd date");
+            return null;
+        }
+
+        return absentStartDate.CurrentDate + "*" + absentEndDate.CurrentDate;
+    }
+
+    public void OnAbsentDateSet()
+    {
+        if (!string.IsNullOrEmpty(absentStartDate.CurrentDate) && !string.IsNullOrEmpty(absentEndDate.CurrentDate) && !MyFunctions.VerifyDateOrder(absentStartDate.CurrentDate, absentEndDate.CurrentDate))
+        {
+            MobileGraphics.instance.DisplayMessage("Invalid date range, 1st date must come before 2nd date");
+            absentEndDate.CurrentDate = absentStartDate.CurrentDate;
+        }
+    }
+
+    
+    private void ClearAbsentRangesContainer()
+    {
+        foreach (Transform t in absentDateRangeContentParent.GetComponentsInChildren<Transform>())
+        {
+            if (t.Equals(absentDateRangeContentParent.transform)) continue;
+
+            Destroy(t.gameObject);
+        }
+
+        absentAttendanceRangeDatas.Clear();
+
+        UpdateAbsentDateRangeContentParentHeight();
+    }
+
+    private void UpdateAbsentDateRangeContentParentHeight()
+    {
+        absentDateRangeContentParent.GetComponent<RectTransform>().sizeDelta = new Vector2(absentDateRangeContentParent.GetComponent<RectTransform>().sizeDelta.x, absentDateRangeContentDefaultHeight + ((absentCount + tardyCount) * absentDateRangeContainerHeight));
+    }
+    
+
+    public void LoadAbsentDateRange()
+    {
+        if (string.IsNullOrEmpty(GetAbsentDateRange())) return;
+
+        absentCount = 0;
+        tardyCount = 0;
+        totalCount = 0;
+
+        absentCountText.gameObject.SetActive(false);
+        tardyCountText.gameObject.SetActive(false);
+
+        MobileGraphics.instance.Loading(true);
+
+        absentDateRanges = MyFunctions.GetDateRange(absentStartDate.CurrentDate, absentEndDate.CurrentDate);
+
+        ClearAbsentRangesContainer();
+
+        foreach (string date in absentDateRanges)
+        {
+            GetAbsentDayAttendance(date);
+        }
+    }  
+
+    public void GetAbsentDayAttendance(string date)
+    {
+        Database.instance.ReadData(Database.instance.GetUsername() + "*" + date, new Database.ReadDataCallbackParams<StudentAttendanceEntryData>(GetAbsentDayAttendanceCallback), new object[] { date });
+    }
+
+    private void GetAbsentDayAttendanceCallback(StudentAttendanceEntryData output, object[] additionalParams)
+    {
+        string date = (string)additionalParams[0];
+        StudentAttendanceEntryData newData = null;
+
+        if (output == null)
+        {
+            newData = new StudentAttendanceEntryData(Int32.Parse(Database.instance.GetUsername()), date, new List<string>(), new List<string>());
+        }
+        else
+        {
+            newData = output;
+        }
+
+        absentAttendanceRangeDatas.Add(newData);
+
+        LoadedAllAbsentDates();
+    }
+
+    private void LoadedAllAbsentDates()
+    {
+        if (absentAttendanceRangeDatas.Count < absentDateRanges.Count) return;
+
+        absentAttendanceRangeDatas.Sort(delegate (StudentAttendanceEntryData s1, StudentAttendanceEntryData s2)
+        {
+            return s1.date.CompareTo(s2.date);
+        });
+
+        foreach (StudentAttendanceEntryData data in absentAttendanceRangeDatas)
+        {
+            List<int> periods = GetPeriods(data.date);
+
+            for (int i = 0; i < studentInfo.classList.Length; i++)
+            {
+                if (!periods.Contains(i + 1)) continue; //dont have class on that day
+
+                totalCount++;
+
+
+                if (!data.presentList.Contains(studentInfo.classList[i].ToString())) //absent
+                {
+                    absentCount++;
+
+                    ClassAttendanceView newContainer = Instantiate(absentDateRangeAttendanceContainerPrefab, absentDateRangeContentParent.transform).GetComponent<ClassAttendanceView>();
+                    newContainer.SetStatus(AttendanceStatus.Absent);
+                    newContainer.SetTeacherText($"{studentInfo.classList[i]} - {DateButton.ConvertToNiceDate(data.date)}");
+                }
+                else if (data.tardyList.Contains(studentInfo.classList[i].ToString())) // tardy
+                {
+                    tardyCount++;
+
+                    ClassAttendanceView newContainer = Instantiate(absentDateRangeAttendanceContainerPrefab, absentDateRangeContentParent.transform).GetComponent<ClassAttendanceView>();
+                    newContainer.SetStatus(AttendanceStatus.Tardy);
+                    newContainer.SetTeacherText($"{studentInfo.classList[i]} - {DateButton.ConvertToNiceDate(data.date)}");
+                }
+            }
+        }
+
+        UpdateAbsentDateRangeContentParentHeight();
+
+        absentCountText.text = $"Absent: {absentCount}/{totalCount}";
+        tardyCountText.text = $"Tardy: {tardyCount}/{totalCount}";
+
+        absentCountText.gameObject.SetActive(true);
+        tardyCountText.gameObject.SetActive(true);
 
         MobileGraphics.instance.Loading(false);
     }
