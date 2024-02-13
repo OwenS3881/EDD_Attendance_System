@@ -6,7 +6,7 @@ using TMPro;
 
 public class RosterViewBox : MonoBehaviour
 {
-    public TMP_Text studentLabel;
+    public TMP_Text mainLabel;
     [SerializeField] private Toggle presentToggle;
     [SerializeField] private Toggle tardyToggle;
     [SerializeField] private Image statusBG;

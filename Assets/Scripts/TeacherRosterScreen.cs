@@ -124,9 +124,9 @@ public class TeacherRosterScreen : MonoBehaviour
         {
             RosterViewBox rosterBox = Instantiate(rosterViewBoxPrefab, rosterViewContainer.transform).GetComponent<RosterViewBox>();
 
-            rosterBox.studentLabel.text = teacherRosterAttendances[i].studentId.ToString();
+            rosterBox.mainLabel.text = teacherRosterAttendances[i].studentId.ToString();
 
-            AddStudentNameToIDField(teacherRosterAttendances[i].studentId, rosterBox.studentLabel);
+            AddStudentNameToIDField(teacherRosterAttendances[i].studentId, rosterBox.mainLabel);
 
             if (!teacherRosterAttendances[i].presentList.Contains(Database.instance.GetUsername()))
             {
@@ -180,7 +180,7 @@ public class TeacherRosterScreen : MonoBehaviour
 
         filteredRosterBoxes.Sort(delegate (RosterViewBox r1, RosterViewBox r2)
         {
-            return r1.studentLabel.text.CompareTo(r2.studentLabel.text);
+            return r1.mainLabel.text.CompareTo(r2.mainLabel.text);
         });
 
         string teacherId = Database.instance.GetUsername();
