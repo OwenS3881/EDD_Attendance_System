@@ -401,7 +401,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &85715893
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1274,7 +1274,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &297785357
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6829,7 +6829,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -100}
-  m_SizeDelta: {x: 0, y: 300}
+  m_SizeDelta: {x: -50, y: 300}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1856962432
 MonoBehaviour:
@@ -6851,7 +6851,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Login
+  m_text: Student Login
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d5926795525834a9192b3a3eb5097d6e, type: 2}
   m_sharedMaterial: {fileID: 6688207153249883843, guid: d5926795525834a9192b3a3eb5097d6e, type: 2}
@@ -6878,7 +6878,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 248.95
+  m_fontSize: 124.45
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

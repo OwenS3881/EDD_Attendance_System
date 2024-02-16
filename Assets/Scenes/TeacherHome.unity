@@ -205,8 +205,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 783655050}
   m_HandleRect: {fileID: 783655049}
   m_Direction: 2
-  m_Value: 1.0000006
-  m_Size: 0.83333343
+  m_Value: 0.9999994
+  m_Size: 0.8333333
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1254,6 +1254,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TeacherSidebarButton (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 4854188143832086656, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1268,7 +1272,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchorMin.x
@@ -1276,15 +1280,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1316,11 +1320,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -800
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -5209,6 +5213,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TeacherSidebarButton (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 4854188143832086656, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5223,7 +5231,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchorMin.x
@@ -5231,15 +5239,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5271,11 +5279,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -500
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -8132,6 +8140,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TeacherSidebarButton (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 4854188143832086656, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -8146,7 +8158,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchorMin.x
@@ -8154,15 +8166,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8194,11 +8206,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -600
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -8723,6 +8735,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TeacherSidebarButton (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 4854188143832086656, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -8737,7 +8753,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchorMin.x
@@ -8745,15 +8761,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8785,11 +8801,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -700
       objectReference: {fileID: 0}
     - target: {fileID: 6685912824118998841, guid: 0157d92c863606140aa9b293e9c439f7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

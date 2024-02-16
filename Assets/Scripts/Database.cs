@@ -46,6 +46,11 @@ public class Database : MonoBehaviour
                     SceneManager.LoadScene("MobileLogin");
                     return null;
                 }
+                else if (SceneManager.GetActiveScene().name.Contains("Parent"))
+                {
+                    SceneManager.LoadScene("ParentLogin");
+                    return null;
+                }
                 else
                 {
                     return null;
