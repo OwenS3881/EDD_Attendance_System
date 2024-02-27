@@ -79,20 +79,19 @@ public class AdminHomeManager : MonoBehaviour
 
         nameField.text = currentData.schoolName;
 
-        InitializeFreePeriods();
-
         DesktopGraphics.instance.Loading(false);
     }
 
+    //Only meant to be called if free periods are removed from database
+    //Should not be called during user use, only during dev use
     private void InitializeFreePeriods()
     {
-        if (currentData.teacherList.Contains(1)) return;
 
         foreach (int i in Database.freePeriodIds)
         {
-            TeacherInfoData freePeriod = new TeacherInfoData(i, $"FREE-{i}", new List<ListWrapper<string>>(), Int32.Parse(Database.instance.GetUsername()));
+            TeacherInfoData freePeriod = new TeacherInfoData(i, $"FREE-{i}", new List<ListWrapper<string>>(), 0);
             Database.instance.SaveDataToFirebase(freePeriod);
-        } 
+        }
     }
 
     public void UpdateName()
