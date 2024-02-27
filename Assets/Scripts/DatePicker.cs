@@ -85,6 +85,15 @@ public class DatePicker : MonoBehaviour
 
     public void Select()
     {
+        if (!IsDateValid(SelectedDate))
+        {
+            string message = "Invalid Date";
+            if (DesktopGraphics.instance != null) DesktopGraphics.instance.DisplayMessage(message);
+            if (MobileGraphics.instance != null) MobileGraphics.instance.DisplayMessage(message);
+            gameObject.SetActive(false);
+            return;
+        }
+
         currentButton.CurrentDate = SelectedDate;
         gameObject.SetActive(false);
     }

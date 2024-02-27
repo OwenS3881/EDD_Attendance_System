@@ -334,7 +334,7 @@ public class StudentViewAttendanceManager : MonoBehaviour
         MobileGraphics.instance.Loading(false);
     }
 
-    //Date Range Attendance
+    //Absent Range Attendance
     public string GetAbsentDateRange()
     {
         if (string.IsNullOrEmpty(absentStartDate.CurrentDate) || string.IsNullOrEmpty(absentEndDate.CurrentDate))
