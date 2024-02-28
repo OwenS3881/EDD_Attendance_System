@@ -167,4 +167,9 @@ public class TeacherLoginManager : MonoBehaviour
         DesktopGraphics.instance.Loading(false);
         OutputMessage("Error: " + error.GenerateErrorReport());
     }
+
+    public void ReturnToNav()
+    {
+        SceneManager.LoadScene("NavScreen");
+    }
 }
