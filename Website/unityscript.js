@@ -13,6 +13,8 @@ var warningBanner = document.querySelector("#unity-warning");
 // way that non-critical warnings and error messages are presented to the
 // user.
 function unityShowBanner(msg, type) {
+    if (type == 'warning') return;
+
   function updateBannerVisibility() {
     warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
   }
