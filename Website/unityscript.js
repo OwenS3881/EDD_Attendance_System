@@ -33,15 +33,15 @@ function unityShowBanner(msg, type) {
 }
 
 var buildUrl = "Build";
-var loaderUrl = buildUrl + "/Web-1.loader.js";
+var loaderUrl = buildUrl + "/UTrack.loader.js";
 var config = {
-  dataUrl: buildUrl + "/Web-1.data",
-  frameworkUrl: buildUrl + "/Web-1.framework.js",
-  codeUrl: buildUrl + "/Web-1.wasm",
+  dataUrl: buildUrl + "/UTrack.data",
+  frameworkUrl: buildUrl + "/UTrack.framework.js",
+  codeUrl: buildUrl + "/UTrack.wasm",
   streamingAssetsUrl: "StreamingAssets",
   companyName: "DefaultCompany",
-  productName: "EDD_Attendance_System",
-  productVersion: "1.0",
+  productName: "UTrack",
+  productVersion: "1.0.1",
   showBanner: unityShowBanner,
 };
 
@@ -70,7 +70,7 @@ if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
 } else {
   // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
   //canvas.style.width = "960px"
-  //canvas.style.height = "600px"
+  //canvas.style.height = "540px"
 }
 
 loadingBar.style.display = "block";
