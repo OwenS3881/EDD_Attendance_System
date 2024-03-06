@@ -106,4 +106,39 @@ public class AdminHomeManager : MonoBehaviour
         Database.instance.LogoutUser();
         SceneManager.LoadScene("AdminLogin");
     }
+
+    public static List<int> GetPeriods(string date, SchoolInfoData schoolInfo)
+    {
+        //check for overrides
+        foreach (ScheduledPeriods sp in schoolInfo.scheduleOverrides)
+        {
+            string[] splitDate = sp.date.Split("*");
+            if (splitDate.Length == 1) //single date
+            {
+                if (date.Equals(splitDate[0]))
+                {
+                    return sp.periods;
+                }
+            }
+            else if (splitDate.Length == 2) //date range
+            {
+                if (MyFunctions.IsDateInRange(date, splitDate[0], splitDate[1]))
+                {
+                    return sp.periods;
+                }
+            }
+        }
+
+        //check for block schedule
+        string dayOfWeek = MyFunctions.GetDayOfWeek(date).ToLower();
+        foreach (ScheduledPeriods sp in schoolInfo.blockSchedule)
+        {
+            if (sp.date.ToLower().Equals(dayOfWeek))
+            {
+                return sp.periods;
+            }
+        }
+
+        return new List<int>();
+    }
 }

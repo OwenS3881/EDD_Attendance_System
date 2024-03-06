@@ -731,7 +731,7 @@ MonoBehaviour:
   rawImageBackground: {fileID: 999457034}
   aspectRatioFitter: {fileID: 999457036}
   scanZone: {fileID: 671459415}
-  testingCam: 0
+  testingCam: 1
   holdResultTime: 0.25
   scanGraphics: {fileID: 671459416}
   detectedColor: {r: 0, g: 1, b: 0, a: 0.69411767}
