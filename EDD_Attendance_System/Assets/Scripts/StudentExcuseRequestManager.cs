@@ -244,7 +244,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
         Database.instance.SaveDataToStorage(pic);
         Debug.Log("Post Call");
         */
-        Database.instance.PutImage("gs://edd-attendance.appspot.com/", bytes);
+        Database.instance.PutImage("https://firebasestorage.googleapis.com/v0/b/edd-attendance.appspot.com/o/", bytes);
     }
 
     private void UpdateCameraRenderer()
