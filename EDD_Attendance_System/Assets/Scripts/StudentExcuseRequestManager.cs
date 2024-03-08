@@ -28,6 +28,8 @@ public class StudentExcuseRequestManager : MonoBehaviour
         GetData();
 
         //Database.instance.LoadImage("https://firebasestorage.googleapis.com/v0/b/edd-attendance.appspot.com/o/Logo.png?alt=media&token=9bc0e797-2fad-4085-a44e-abe139620117", rawImageBackground);
+
+        Database.instance.PutImage("https://firebasestorage.googleapis.com/v0/b/edd-attendance.appspot.com/o/", new byte[] { 1, 1, 1 });
     }
 
     public void MainMenu()
@@ -218,6 +220,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
     {
         isCamAvailable = false;
 
+        /*
         //first Make sure you're using RGB24 as your texture format
         Texture2D texture = new Texture2D(cameraTexture.width, cameraTexture.height, TextureFormat.RGB24, false);
 
@@ -229,6 +232,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
         //then Save To Disk as PNG
         byte[] bytes = texture.EncodeToPNG();
         Debug.Log(bytes.Length);
+        */
         /*
         var dirPath = Application.dataPath + "/../Assets/Sprites/";
         if (!Directory.Exists(dirPath))
@@ -244,7 +248,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
         Database.instance.SaveDataToStorage(pic);
         Debug.Log("Post Call");
         */
-        Database.instance.PutImage("https://firebasestorage.googleapis.com/v0/b/edd-attendance.appspot.com/o/test1", bytes);
+        Database.instance.PutImage("https://firebasestorage.googleapis.com/v0/b/edd-attendance.appspot.com/o/", new byte[] {1, 1, 1});
     }
 
     private void UpdateCameraRenderer()
