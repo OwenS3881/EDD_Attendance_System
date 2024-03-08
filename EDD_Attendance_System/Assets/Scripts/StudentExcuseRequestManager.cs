@@ -5,12 +5,20 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
+using System.IO;
 
 public class StudentExcuseRequestManager : MonoBehaviour
 {
     [SerializeField] private TMP_Dropdown teacherIdDropdown;
     [SerializeField] private DateButton dateButton;
     [SerializeField] private TMP_InputField reasonInput;
+
+    [SerializeField] private RawImage rawImageBackground;
+    [SerializeField] private AspectRatioFitter aspectRatioFitter;
+    [SerializeField] private bool testingCam;
+    private bool isCamAvailable;
+    private WebCamTexture cameraTexture;
+    private bool camActive;
 
     private StudentInfoData studentInfo;
     private SchoolInfoData schoolInfo;
@@ -139,7 +147,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
             }
         }
 
-        List<int> periods = GetPeriods(dateButton.CurrentDate);
+        List<int> periods = AdminHomeManager.GetPeriods(dateButton.CurrentDate, schoolInfo);
 
         int period = teacherIdDropdown.value + 1;
 
@@ -159,38 +167,94 @@ public class StudentExcuseRequestManager : MonoBehaviour
         MobileGraphics.instance.Loading(false);
     }
 
-    private List<int> GetPeriods(string date)
+    public void ActivateCamera()
     {
-        //check for overrides
-        foreach (ScheduledPeriods sp in schoolInfo.scheduleOverrides)
+        if (!camActive)
         {
-            string[] splitDate = sp.date.Split("*");
-            if (splitDate.Length == 1) //single date
+            camActive = true;
+            SetUpCamera();
+        }
+        else
+        {
+            camActive = false;
+            DisableCamera();
+        }
+        
+    }
+
+    private void SetUpCamera()
+    {
+        WebCamDevice[] devices = WebCamTexture.devices;
+
+        if (devices.Length == 0)
+        {
+            isCamAvailable = false;
+            return;
+        }
+
+        for (int i = 0; i < devices.Length; i++)
+        {
+            if (devices[i].isFrontFacing == testingCam)
             {
-                if (date.Equals(splitDate[0]))
-                {
-                    return sp.periods;
-                }
-            }
-            else if (splitDate.Length == 2) //date range
-            {
-                if (MyFunctions.IsDateInRange(date, splitDate[0], splitDate[1]))
-                {
-                    return sp.periods;
-                }
+                cameraTexture = new WebCamTexture(devices[i].name, (int)rawImageBackground.rectTransform.sizeDelta.x, (int)rawImageBackground.rectTransform.sizeDelta.y);
             }
         }
 
-        //check for block schedule
-        string dayOfWeek = MyFunctions.GetDayOfWeek(date).ToLower();
-        foreach (ScheduledPeriods sp in schoolInfo.blockSchedule)
+        if (cameraTexture != null)
         {
-            if (sp.date.ToLower().Equals(dayOfWeek))
-            {
-                return sp.periods;
-            }
+            cameraTexture.Play();
+            rawImageBackground.texture = cameraTexture;
+            isCamAvailable = true;
         }
+        else
+        {
+            isCamAvailable = false;
+        }
+    }
 
-        return new List<int>();
+    private void DisableCamera()
+    {
+        isCamAvailable = false;
+
+        //first Make sure you're using RGB24 as your texture format
+        Texture2D texture = new Texture2D(cameraTexture.width, cameraTexture.height, TextureFormat.RGB24, false);
+
+        texture.SetPixels(cameraTexture.GetPixels());
+        texture.Apply();
+
+        cameraTexture.Stop();
+
+        //then Save To Disk as PNG
+        byte[] bytes = texture.EncodeToPNG();
+        Debug.Log(bytes.Length);
+        /*
+        var dirPath = Application.dataPath + "/../Assets/Sprites/";
+        if (!Directory.Exists(dirPath))
+        {
+            Directory.CreateDirectory(dirPath);
+        }
+        File.WriteAllBytes(dirPath + "Image" + ".png", bytes);
+        */
+
+        Debug.Log("Pre Call");
+        ImageData pic = new ImageData("Test1", bytes);
+        Database.instance.SaveDataToStorage(pic);
+        Debug.Log("Post Call");
+    }
+
+    private void UpdateCameraRenderer()
+    {
+        if (!isCamAvailable) return;
+
+        float ratio = (float)cameraTexture.width / (float)cameraTexture.height;
+        aspectRatioFitter.aspectRatio = ratio;
+
+        int orientation = -cameraTexture.videoRotationAngle;
+        rawImageBackground.rectTransform.localEulerAngles = new Vector3(0, 0, orientation);
+    }
+
+    private void Update()
+    {
+        if (camActive) UpdateCameraRenderer();
     }
 }

@@ -7,12 +7,14 @@ using TMPro;
 using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine.SceneManagement;
+using UnityEngine.Networking;
 
 public class Database : MonoBehaviour
 {
     public static Database instance { get; private set; }
 
     [SerializeField] private string databaseURL = "";
+    [SerializeField] private string storageURL = "";
 
     public static readonly List<int> freePeriodIds = new List<int>() { 1, 2, 3, 4, 5, 6, 7 };
     public static readonly List<int> checkInIds = new List<int>() { 1, 2, 3, 4 };
@@ -85,7 +87,7 @@ public class Database : MonoBehaviour
         
         RestClient.Put(databaseURL + "/" + data.fileName + ".json", JsonUtility.ToJson(data)).Then(response =>
         {
-            //Debug.Log("Success");
+            Debug.Log("Success");
         });
         
     }
@@ -134,5 +136,13 @@ public class Database : MonoBehaviour
     public string GetUserEmail()
     {
         return CurrentUser.InfoResultPayload.AccountInfo.PrivateInfo.Email;
+    }
+
+    public void SaveDataToStorage(ImageData data)
+    {
+        RestClient.Put(storageURL + "/" + data.fileName + ".png", data.image).Then(response =>
+        {
+            Debug.Log("Maybe?");
+        });
     }
 }
