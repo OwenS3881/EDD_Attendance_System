@@ -145,4 +145,43 @@ public class Database : MonoBehaviour
             Debug.Log("Maybe?");
         });
     }
+
+    public void LoadImage(string url, RawImage destination)
+    {
+        StartCoroutine(LoadImageCoroutine(url, destination));
+    }
+
+    IEnumerator LoadImageCoroutine(string url, RawImage destination)
+    {
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
+        yield return request.SendWebRequest();
+        if (request.isNetworkError || request.isHttpError)
+        {
+            Debug.LogError(request.error);
+        }
+        else
+        {
+            destination.texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
+        }
+    }
+
+    public void PutImage(string url, byte[] image)
+    {
+        StartCoroutine(PutImageCoroutine(url, image));
+    }
+
+    IEnumerator PutImageCoroutine(string url, byte[] image)
+    {
+        UnityWebRequest request = UnityWebRequest.Put(url, image);
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError(request.error);
+        }
+        else
+        {
+            Debug.Log("Success!");
+        }
+    }
 }

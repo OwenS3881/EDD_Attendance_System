@@ -26,6 +26,8 @@ public class StudentExcuseRequestManager : MonoBehaviour
     private void Start()
     {
         GetData();
+
+        //Database.instance.LoadImage("https://firebasestorage.googleapis.com/v0/b/edd-attendance.appspot.com/o/Logo.png?alt=media&token=9bc0e797-2fad-4085-a44e-abe139620117", rawImageBackground);
     }
 
     public void MainMenu()
@@ -236,10 +238,13 @@ public class StudentExcuseRequestManager : MonoBehaviour
         File.WriteAllBytes(dirPath + "Image" + ".png", bytes);
         */
 
+        /*
         Debug.Log("Pre Call");
         ImageData pic = new ImageData("Test1", bytes);
         Database.instance.SaveDataToStorage(pic);
         Debug.Log("Post Call");
+        */
+        Database.instance.PutImage("gs://edd-attendance.appspot.com/", bytes);
     }
 
     private void UpdateCameraRenderer()
