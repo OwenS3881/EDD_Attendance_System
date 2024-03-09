@@ -238,7 +238,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
     {
         if (currentImage == null) return;
 
-        Database.instance.PutImage($"excuseRequest-{Database.instance.GetUsername()}-{System.DateTime.Now.ToString()}", currentImage, new Database.PutImageCallback(SaveImageCallback));
+        Database.instance.PutImage($"excuseRequest-{Database.instance.GetUsername()}-{System.DateTime.Now.ToString()}.png", currentImage, new Database.PutImageCallback(SaveImageCallback));
     }
 
     private void SaveImageCallback(PostImageResponseData data)
