@@ -29,9 +29,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
 
     private void Start()
     {
-        //GetData();
-
-        Database.instance.PutImage("test4.png", testTexture.EncodeToPNG(), new Database.PutImageCallback(SaveImageCallback));
+        GetData();
     }
 
     public void MainMenu()
@@ -242,7 +240,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
     {
         if (currentImage == null) return;
 
-        Database.instance.PutImage($"excuseRequest-{Database.instance.GetUsername()}-{System.DateTime.Now.ToString()}.png", currentImage, new Database.PutImageCallback(SaveImageCallback));
+        Database.instance.PutImage($"excuseRequest_{ Database.instance.GetUsername()}_{ System.DateTime.Now.ToString("yyyy_MM_dd_T_HH_mm_ss")}.png", currentImage, new Database.PutImageCallback(SaveImageCallback));
     }
 
     private void SaveImageCallback(PostImageResponseData data)
