@@ -24,8 +24,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
     private SchoolInfoData schoolInfo;
 
     private byte[] currentImage;
-
-    [SerializeField] private Texture2D testTexture;
+    private AttendanceExcuseRequest currentRequest;
 
     private void Start()
     {
@@ -164,11 +163,45 @@ public class StudentExcuseRequestManager : MonoBehaviour
 
         if (schoolInfo.excuseRequests == null) schoolInfo.excuseRequests = new List<AttendanceExcuseRequest>();
 
-        AttendanceExcuseRequest newRequest = new AttendanceExcuseRequest(Int32.Parse(Database.instance.GetUsername()), selectedTeacher, dateButton.CurrentDate, reasonInput.text, false);
-        schoolInfo.excuseRequests.Add(newRequest);
+        currentRequest = new AttendanceExcuseRequest(Int32.Parse(Database.instance.GetUsername()), selectedTeacher, dateButton.CurrentDate, reasonInput.text, false);
+
+        if (currentImage == null) //no image submission
+        {
+            SaveRequest();
+        }
+        else //image submission
+        {
+            AddImageToRequest();
+        }
+    }
+
+    private void SaveRequest()
+    {
+        schoolInfo.excuseRequests.Add(currentRequest);
         Database.instance.SaveDataToFirebase(schoolInfo);
         MobileGraphics.instance.DisplayMessage("Success");
         MobileGraphics.instance.Loading(false);
+        currentRequest = null;
+    }
+
+    private void AddImageToRequest()
+    {
+        SaveImage();
+    }
+
+    private void SaveImage()
+    {
+        if (currentImage == null) return;
+
+        Database.instance.PutImage($"excuseRequest_{ Database.instance.GetUsername()}_{ System.DateTime.Now.ToString("yyyy_MM_dd_T_HH_mm_ss")}.png", currentImage, new Database.PutImageCallback(SaveImageCallback));
+    }
+
+    private void SaveImageCallback(PostImageResponseData data)
+    {
+        currentRequest.imageName = data.name;
+        currentRequest.imageToken = data.downloadTokens;
+
+        SaveRequest();
     }
 
     public void ActivateCamera()
@@ -232,20 +265,6 @@ public class StudentExcuseRequestManager : MonoBehaviour
         cameraTexture.Stop();
 
         currentImage = texture.EncodeToPNG();
-
-        SaveImage();
-    }
-
-    private void SaveImage()
-    {
-        if (currentImage == null) return;
-
-        Database.instance.PutImage($"excuseRequest_{ Database.instance.GetUsername()}_{ System.DateTime.Now.ToString("yyyy_MM_dd_T_HH_mm_ss")}.png", currentImage, new Database.PutImageCallback(SaveImageCallback));
-    }
-
-    private void SaveImageCallback(PostImageResponseData data)
-    {
-        Debug.Log($"{data.name} - {data.downloadTokens}");
     }
 
     private void UpdateCameraRenderer()
