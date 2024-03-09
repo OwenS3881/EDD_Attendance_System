@@ -25,9 +25,13 @@ public class StudentExcuseRequestManager : MonoBehaviour
 
     private byte[] currentImage;
 
+    [SerializeField] private Texture2D testTexture;
+
     private void Start()
     {
-        GetData();
+        //GetData();
+
+        Database.instance.PutImage("test4.png", testTexture.EncodeToPNG(), new Database.PutImageCallback(SaveImageCallback));
     }
 
     public void MainMenu()
