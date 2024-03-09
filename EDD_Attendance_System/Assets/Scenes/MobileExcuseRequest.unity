@@ -3022,6 +3022,7 @@ MonoBehaviour:
   rawImageBackground: {fileID: 802778393}
   aspectRatioFitter: {fileID: 802778395}
   testingCam: 1
+  testTex: {fileID: 2800000, guid: cee7e126612358d428c69a8fd1673f6c, type: 3}
 --- !u!1 &1549174916
 GameObject:
   m_ObjectHideFlags: 0
@@ -4419,8 +4420,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1152909540}
   m_HandleRect: {fileID: 1152909539}
   m_Direction: 2
-  m_Value: 0.9999999
-  m_Size: 0.474671
+  m_Value: 1
+  m_Size: 0.47487625
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

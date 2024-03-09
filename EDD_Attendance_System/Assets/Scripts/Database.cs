@@ -138,41 +138,39 @@ public class Database : MonoBehaviour
         return CurrentUser.InfoResultPayload.AccountInfo.PrivateInfo.Email;
     }
 
-    public void SaveDataToStorage(ImageData data)
+    public delegate void LoadImageCallback(Texture2D downloadedTexture);
+    public void LoadImage(string fileName, string mediaToken, LoadImageCallback callback)
     {
-        RestClient.Put(storageURL + "/" + data.fileName + ".png", data.image).Then(response =>
-        {
-            Debug.Log("Maybe?");
-        });
+        StartCoroutine(LoadImageCoroutine(fileName, mediaToken, callback));
     }
 
-    public void LoadImage(string url, RawImage destination)
+    IEnumerator LoadImageCoroutine(string fileName, string mediaToken, LoadImageCallback callback)
     {
-        StartCoroutine(LoadImageCoroutine(url, destination));
-    }
-
-    IEnumerator LoadImageCoroutine(string url, RawImage destination)
-    {
-        UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture($"{storageURL}{fileName}?alt=media&token={mediaToken}");
         yield return request.SendWebRequest();
-        if (request.isNetworkError || request.isHttpError)
+        if (request.result != UnityWebRequest.Result.Success)
         {
             Debug.LogError(request.error);
         }
         else
         {
-            destination.texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
+            callback(((DownloadHandlerTexture)request.downloadHandler).texture);
         }
     }
 
-    public void PutImage(string url, byte[] image)
+    public delegate void PutImageCallback(PostImageResponseData responseData);
+    public void PutImage(string fileName, byte[] image, PutImageCallback callback)
     {
-        StartCoroutine(PutImageCoroutine(url, image));
+        StartCoroutine(PutImageCoroutine(fileName, image, callback));
     }
 
-    IEnumerator PutImageCoroutine(string url, byte[] image)
+    IEnumerator PutImageCoroutine(string fileName, byte[] image, PutImageCallback callback)
     {
-        UnityWebRequest request = UnityWebRequest.Put(url, image);
+        //UnityWebRequest request = UnityWebRequest.Put(url, image);
+        var request = new UnityWebRequest(storageURL + fileName, UnityWebRequest.kHttpVerbPOST);
+        request.SetRequestHeader("Content-Type", "image/png");
+        request.uploadHandler = new UploadHandlerRaw(image);
+        request.downloadHandler = new DownloadHandlerBuffer();
         yield return request.SendWebRequest();
 
         if (request.result != UnityWebRequest.Result.Success)
@@ -181,7 +179,8 @@ public class Database : MonoBehaviour
         }
         else
         {
-            Debug.Log("Success!");
+            PostImageResponseData responseData = JsonUtility.FromJson<PostImageResponseData>(request.downloadHandler.text);
+            callback(responseData);
         }
     }
 }

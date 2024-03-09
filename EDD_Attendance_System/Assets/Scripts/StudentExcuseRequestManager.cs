@@ -23,13 +23,11 @@ public class StudentExcuseRequestManager : MonoBehaviour
     private StudentInfoData studentInfo;
     private SchoolInfoData schoolInfo;
 
+    private byte[] currentImage;
+
     private void Start()
     {
         GetData();
-
-        //Database.instance.LoadImage("https://firebasestorage.googleapis.com/v0/b/edd-attendance.appspot.com/o/Logo.png?alt=media&token=9bc0e797-2fad-4085-a44e-abe139620117", rawImageBackground);
-
-        Database.instance.PutImage("https://firebasestorage.googleapis.com/v0/b/edd-attendance.appspot.com/o/", new byte[] { 1, 1, 1 });
     }
 
     public void MainMenu()
@@ -175,8 +173,8 @@ public class StudentExcuseRequestManager : MonoBehaviour
     {
         if (!camActive)
         {
-            camActive = true;
             SetUpCamera();
+            if (isCamAvailable) camActive = true;  
         }
         else
         {
@@ -218,9 +216,11 @@ public class StudentExcuseRequestManager : MonoBehaviour
 
     private void DisableCamera()
     {
+        if (!isCamAvailable) return;
+
         isCamAvailable = false;
 
-        /*
+        
         //first Make sure you're using RGB24 as your texture format
         Texture2D texture = new Texture2D(cameraTexture.width, cameraTexture.height, TextureFormat.RGB24, false);
 
@@ -229,26 +229,21 @@ public class StudentExcuseRequestManager : MonoBehaviour
 
         cameraTexture.Stop();
 
-        //then Save To Disk as PNG
-        byte[] bytes = texture.EncodeToPNG();
-        Debug.Log(bytes.Length);
-        */
-        /*
-        var dirPath = Application.dataPath + "/../Assets/Sprites/";
-        if (!Directory.Exists(dirPath))
-        {
-            Directory.CreateDirectory(dirPath);
-        }
-        File.WriteAllBytes(dirPath + "Image" + ".png", bytes);
-        */
+        currentImage = texture.EncodeToPNG();
 
-        /*
-        Debug.Log("Pre Call");
-        ImageData pic = new ImageData("Test1", bytes);
-        Database.instance.SaveDataToStorage(pic);
-        Debug.Log("Post Call");
-        */
-        Database.instance.PutImage("https://firebasestorage.googleapis.com/v0/b/edd-attendance.appspot.com/o/", new byte[] {1, 1, 1});
+        SaveImage();
+    }
+
+    private void SaveImage()
+    {
+        if (currentImage == null) return;
+
+        Database.instance.PutImage($"excuseRequest-{Database.instance.GetUsername()}-{System.DateTime.Now.ToString()}", currentImage, new Database.PutImageCallback(SaveImageCallback));
+    }
+
+    private void SaveImageCallback(PostImageResponseData data)
+    {
+        Debug.Log($"{data.name} - {data.downloadTokens}");
     }
 
     private void UpdateCameraRenderer()

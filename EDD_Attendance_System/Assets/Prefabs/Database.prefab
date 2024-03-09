@@ -45,4 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   databaseURL: https://edd-attendance-default-rtdb.firebaseio.com
-  storageURL: gs://edd-attendance.appspot.com
+  storageURL: https://firebasestorage.googleapis.com/v0/b/edd-attendance.appspot.com/o/
