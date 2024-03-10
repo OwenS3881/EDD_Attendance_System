@@ -114,6 +114,8 @@ public class ParentExcuseRequestManager : MonoBehaviour
 
         if (ParentHomeManager.instance.SchoolData.excuseRequests == null) ParentHomeManager.instance.SchoolData.excuseRequests = new List<AttendanceExcuseRequest>();
 
+        currentRequest = new AttendanceExcuseRequest(ParentHomeManager.instance.StudentInfo.studentId, selectedTeacher, dateButton.CurrentDate, reasonInput.text, false);
+
         if (currentImage == null) //no image submission
         {
             SaveRequest();
