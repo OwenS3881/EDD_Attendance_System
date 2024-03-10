@@ -170,14 +170,23 @@ public class AdminExcuseRequestManager : MonoBehaviour
     {
         AdminCreator.MarkPresent(currentRequest.studentId, currentRequest.teacherId, currentRequest.date, false);
 
+        if (imageContent.activeSelf)
+        {
+            Database.instance.DeleteImage(currentRequest.imageName, currentRequest.imageToken);
+        }
+
         AdminHomeManager.instance.currentData.excuseRequests.Remove(currentRequest);
         Database.instance.SaveDataToFirebase(AdminHomeManager.instance.currentData);
+
+        excuseImage.texture = null;
 
         OnEnable();
     }
 
     public void Defer()
     {
+        excuseImage.texture = null;
+
         OnEnable();
     }
 
@@ -185,6 +194,13 @@ public class AdminExcuseRequestManager : MonoBehaviour
     {
         AdminHomeManager.instance.currentData.excuseRequests.Remove(currentRequest);
         Database.instance.SaveDataToFirebase(AdminHomeManager.instance.currentData);
+
+        if (imageContent.activeSelf)
+        {
+            Database.instance.DeleteImage(currentRequest.imageName, currentRequest.imageToken);
+        }
+
+        excuseImage.texture = null;
 
         OnEnable();
     }

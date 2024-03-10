@@ -3,12 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System;
+using UnityEngine.UI;
 
 public class ParentExcuseRequestManager : MonoBehaviour
 {
     [SerializeField] private TMP_Dropdown teacherIdDropdown;
     [SerializeField] private DateButton dateButton;
     [SerializeField] private TMP_InputField reasonInput;
+
+    [SerializeField] private RawImage rawImageBackground;
+    [SerializeField] private AspectRatioFitter aspectRatioFitter;
+    private bool isCamAvailable;
+    private WebCamTexture cameraTexture;
+    private bool camActive;
+
+    private byte[] currentImage;
+    private AttendanceExcuseRequest currentRequest;
 
     private void OnEnable()
     {
@@ -91,7 +101,7 @@ public class ParentExcuseRequestManager : MonoBehaviour
             }
         }
 
-        List<int> periods = GetPeriods(dateButton.CurrentDate);
+        List<int> periods = AdminHomeManager.GetPeriods(dateButton.CurrentDate, ParentHomeManager.instance.SchoolData);
 
         int period = teacherIdDropdown.value + 1;
 
@@ -104,45 +114,128 @@ public class ParentExcuseRequestManager : MonoBehaviour
 
         if (ParentHomeManager.instance.SchoolData.excuseRequests == null) ParentHomeManager.instance.SchoolData.excuseRequests = new List<AttendanceExcuseRequest>();
 
-        AttendanceExcuseRequest newRequest = new AttendanceExcuseRequest(ParentHomeManager.instance.StudentInfo.studentId, selectedTeacher, dateButton.CurrentDate, reasonInput.text, false);
-        ParentHomeManager.instance.SchoolData.excuseRequests.Add(newRequest);
+        if (currentImage == null) //no image submission
+        {
+            SaveRequest();
+        }
+        else //image submission
+        {
+            AddImageToRequest();
+        }
+    }
+
+    private void SaveRequest()
+    {
+        ParentHomeManager.instance.SchoolData.excuseRequests.Add(currentRequest);
         Database.instance.SaveDataToFirebase(ParentHomeManager.instance.SchoolData);
         DesktopGraphics.instance.DisplayMessage("Success");
         DesktopGraphics.instance.Loading(false);
+        currentRequest = null;
     }
 
-    private List<int> GetPeriods(string date)
+    private void AddImageToRequest()
     {
-        //check for overrides
-        foreach (ScheduledPeriods sp in ParentHomeManager.instance.SchoolData.scheduleOverrides)
+        SaveImage();
+    }
+
+    private void SaveImage()
+    {
+        if (currentImage == null) return;
+
+        Database.instance.PutImage($"excuseRequest_{ Database.instance.GetUsername()}_{ System.DateTime.Now.ToString("yyyy_MM_dd_T_HH_mm_ss")}.png", currentImage, new Database.PutImageCallback(SaveImageCallback));
+    }
+
+    private void SaveImageCallback(PostImageResponseData data)
+    {
+        currentRequest.imageName = data.name;
+        currentRequest.imageToken = data.downloadTokens;
+
+        SaveRequest();
+    }
+
+    public void ActivateCamera()
+    {
+        if (!camActive)
         {
-            string[] splitDate = sp.date.Split("*");
-            if (splitDate.Length == 1) //single date
+            SetUpCamera();
+            if (isCamAvailable)
             {
-                if (date.Equals(splitDate[0]))
-                {
-                    return sp.periods;
-                }
+                camActive = true;
             }
-            else if (splitDate.Length == 2) //date range
+            else
             {
-                if (MyFunctions.IsDateInRange(date, splitDate[0], splitDate[1]))
-                {
-                    return sp.periods;
-                }
+                DesktopGraphics.instance.DisplayMessage("No Camera Found");
+            }
+        }
+        else
+        {
+            camActive = false;
+            DisableCamera();
+        }
+
+    }
+
+    private void SetUpCamera()
+    {
+        WebCamDevice[] devices = WebCamTexture.devices;
+
+        if (devices.Length == 0)
+        {
+            isCamAvailable = false;
+            return;
+        }
+
+        for (int i = 0; i < devices.Length; i++)
+        {
+            if (devices[i].isFrontFacing)
+            {
+                cameraTexture = new WebCamTexture(devices[i].name, (int)rawImageBackground.rectTransform.sizeDelta.x, (int)rawImageBackground.rectTransform.sizeDelta.y);
             }
         }
 
-        //check for block schedule
-        string dayOfWeek = MyFunctions.GetDayOfWeek(date).ToLower();
-        foreach (ScheduledPeriods sp in ParentHomeManager.instance.SchoolData.blockSchedule)
+        if (cameraTexture != null)
         {
-            if (sp.date.ToLower().Equals(dayOfWeek))
-            {
-                return sp.periods;
-            }
+            cameraTexture.Play();
+            rawImageBackground.texture = cameraTexture;
+            isCamAvailable = true;
         }
+        else
+        {
+            isCamAvailable = false;
+        }
+    }
 
-        return new List<int>();
+    private void DisableCamera()
+    {
+        if (!isCamAvailable) return;
+
+        isCamAvailable = false;
+
+
+        //first Make sure you're using RGB24 as your texture format
+        Texture2D texture = new Texture2D(cameraTexture.width, cameraTexture.height, TextureFormat.RGB24, false);
+
+        texture.SetPixels(cameraTexture.GetPixels());
+        texture.Apply();
+
+        cameraTexture.Stop();
+
+        currentImage = texture.EncodeToPNG();
+    }
+
+    private void UpdateCameraRenderer()
+    {
+        if (!isCamAvailable) return;
+
+        float ratio = (float)cameraTexture.width / (float)cameraTexture.height;
+        aspectRatioFitter.aspectRatio = ratio;
+
+        int orientation = -cameraTexture.videoRotationAngle;
+        rawImageBackground.rectTransform.localEulerAngles = new Vector3(0, 0, orientation);
+    }
+
+    private void Update()
+    {
+        if (camActive) UpdateCameraRenderer();
     }
 }

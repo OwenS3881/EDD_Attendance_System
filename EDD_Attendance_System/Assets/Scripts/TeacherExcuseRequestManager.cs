@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class TeacherExcuseRequestManager : MonoBehaviour
 {
@@ -23,6 +24,14 @@ public class TeacherExcuseRequestManager : MonoBehaviour
     [SerializeField] private TMP_Text dateField;
     [SerializeField] private TMP_Text reasonField;
     private AttendanceExcuseRequest currentRequest;
+
+    [SerializeField] private GameObject decisionContentParent;
+    [SerializeField] private GameObject noImageContent;
+    [SerializeField] private GameObject imageContent;
+    [SerializeField] private RawImage excuseImage;
+    [SerializeField] private AspectRatioFitter excuseImageFitter;
+    [SerializeField] private float noImageContentHeight;
+    [SerializeField] private float imageContentHeight;
 
     private List<PendingTeacherExcuseRequest> requestObjects = new List<PendingTeacherExcuseRequest>();
 
@@ -82,6 +91,27 @@ public class TeacherExcuseRequestManager : MonoBehaviour
         AddStudentName(selectedRequest.studentId, studentField);
 
         currentRequest = selectedRequest;
+
+        if (!string.IsNullOrEmpty(currentRequest.imageName) && !string.IsNullOrEmpty(currentRequest.imageToken))
+        {
+            Database.instance.LoadImage(currentRequest.imageName, currentRequest.imageToken, new Database.LoadImageCallback(LoadImageCallback));
+
+            imageContent.SetActive(true);
+            noImageContent.SetActive(false);
+            decisionContentParent.GetComponent<RectTransform>().sizeDelta = new Vector2(decisionContentParent.GetComponent<RectTransform>().sizeDelta.x, imageContentHeight);
+        }
+        else
+        {
+            imageContent.SetActive(false);
+            noImageContent.SetActive(true);
+            decisionContentParent.GetComponent<RectTransform>().sizeDelta = new Vector2(decisionContentParent.GetComponent<RectTransform>().sizeDelta.x, noImageContentHeight);
+        }
+    }
+
+    private void LoadImageCallback(Texture2D downloadedTexture)
+    {
+        excuseImage.texture = downloadedTexture;
+        excuseImageFitter.aspectRatio = (float)downloadedTexture.width / (float)downloadedTexture.height;
     }
 
     private void AddStudentName(int studentId, TMP_Text field)
@@ -147,14 +177,23 @@ public class TeacherExcuseRequestManager : MonoBehaviour
     {
         AdminCreator.MarkPresent(currentRequest.studentId, currentRequest.teacherId, currentRequest.date, false);
 
+        if (imageContent.activeSelf)
+        {
+            Database.instance.DeleteImage(currentRequest.imageName, currentRequest.imageToken);
+        }
+
         schoolData.excuseRequests.Remove(currentRequest);
         Database.instance.SaveDataToFirebase(schoolData);
+
+        excuseImage.texture = null;
 
         OnEnable();
     }
 
     public void Defer()
     {
+        excuseImage.texture = null;
+
         OnEnable();
     }
 
@@ -162,6 +201,8 @@ public class TeacherExcuseRequestManager : MonoBehaviour
     {
         schoolData.excuseRequests[schoolData.excuseRequests.IndexOf(currentRequest)].teacherDenied = true;
         Database.instance.SaveDataToFirebase(schoolData);
+
+        excuseImage.texture = null;
 
         OnEnable();
     }

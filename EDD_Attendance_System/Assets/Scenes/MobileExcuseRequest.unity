@@ -920,7 +920,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 110.65
+  m_fontSize: 157.85
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3021,8 +3021,7 @@ MonoBehaviour:
   reasonInput: {fileID: 652961521}
   rawImageBackground: {fileID: 802778393}
   aspectRatioFitter: {fileID: 802778395}
-  testingCam: 1
-  testTexture: {fileID: 2800000, guid: cee7e126612358d428c69a8fd1673f6c, type: 3}
+  testingCam: 0
 --- !u!1 &1549174916
 GameObject:
   m_ObjectHideFlags: 0
@@ -4420,8 +4419,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1152909540}
   m_HandleRect: {fileID: 1152909539}
   m_Direction: 2
-  m_Value: 0.9999999
-  m_Size: 0.474671
+  m_Value: 1
+  m_Size: 0.12492112
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

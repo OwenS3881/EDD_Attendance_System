@@ -87,7 +87,7 @@ public class Database : MonoBehaviour
         
         RestClient.Put(databaseURL + "/" + data.fileName + ".json", JsonUtility.ToJson(data)).Then(response =>
         {
-            Debug.Log("Success");
+            //Debug.Log("Success");
         });
         
     }
@@ -181,6 +181,25 @@ public class Database : MonoBehaviour
         {
             PostImageResponseData responseData = JsonUtility.FromJson<PostImageResponseData>(request.downloadHandler.text);
             callback(responseData);
+        }
+    }
+
+    public void DeleteImage(string fileName, string mediaToken)
+    {
+        StartCoroutine(DeleteImageCoroutine(fileName, mediaToken));
+    }
+
+    IEnumerator DeleteImageCoroutine(string fileName, string mediaToken)
+    {
+        var request = new UnityWebRequest($"{storageURL}{fileName}?alt=media&token={mediaToken}", UnityWebRequest.kHttpVerbDELETE);
+        yield return request.SendWebRequest();
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError(request.error);
+        }
+        else
+        {
+            //Debug.Log("Success");
         }
     }
 }
