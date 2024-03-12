@@ -159,15 +159,7 @@ public class ParentExcuseRequestManager : MonoBehaviour
     {
         if (!camActive)
         {
-            SetUpCamera();
-            if (isCamAvailable)
-            {
-                camActive = true;
-            }
-            else
-            {
-                DesktopGraphics.instance.DisplayMessage("No Camera Found");
-            }
+            StartCoroutine(SetUpCamera());
         }
         else
         {
@@ -177,14 +169,26 @@ public class ParentExcuseRequestManager : MonoBehaviour
 
     }
 
-    private void SetUpCamera()
+    IEnumerator SetUpCamera()
     {
+        if (!Application.HasUserAuthorization(UserAuthorization.WebCam))
+        {
+            yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);
+
+            if (!Application.HasUserAuthorization(UserAuthorization.WebCam))
+            {
+                DesktopGraphics.instance.DisplayMessage("Camera Access Not Granted");
+                yield break;
+            }
+        }
+
         WebCamDevice[] devices = WebCamTexture.devices;
 
         if (devices.Length == 0)
         {
             isCamAvailable = false;
-            return;
+            DesktopGraphics.instance.DisplayMessage("No Camera Found");
+            yield break;
         }
 
         for (int i = 0; i < devices.Length; i++)
@@ -204,6 +208,15 @@ public class ParentExcuseRequestManager : MonoBehaviour
         else
         {
             isCamAvailable = false;
+        }
+
+        if (isCamAvailable)
+        {
+            camActive = true;
+        }
+        else
+        {
+            DesktopGraphics.instance.DisplayMessage("No Camera Found");
         }
     }
 
