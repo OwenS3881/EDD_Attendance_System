@@ -5,25 +5,25 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MobileLogin.unity
     guid: d64495789fc86490895601a04beb99bc
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MobileHome.unity
     guid: 8a55ef36725574b82a19f0cf555870b3
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/QRScanner.unity
     guid: 13684a1ae3d7345b3b458236d902e161
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MobileViewAttendance.unity
     guid: d018b8f54cf1faf4a8d34c408064c0b0
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MobileAccountInfo.unity
     guid: b94b373854a61c8488e829454dfee044
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MobileExcuseRequest.unity
     guid: 576d6007a6a724c26ad66e6f52a73a52
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MobileFreePeriod.unity
     guid: d85a1468eced046e98f1f1ae96e5cf8c
   - enabled: 1
