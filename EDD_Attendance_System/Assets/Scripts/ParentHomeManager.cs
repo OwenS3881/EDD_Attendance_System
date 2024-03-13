@@ -25,6 +25,7 @@ public class ParentHomeManager : MonoBehaviour
     public SchoolInfoData SchoolData
     {
         get { return schoolData; }
+        set { schoolData = value; }
     }
 
 

@@ -84,7 +84,22 @@ public class ParentExcuseRequestManager : MonoBehaviour
         }
 
         DesktopGraphics.instance.Loading(true);
-        Database.instance.ReadData(ParentHomeManager.instance.StudentInfo.studentId + "*" + dateButton.CurrentDate, new Database.ReadDataCallback<StudentAttendanceEntryData>(GetAttendanceCallback));
+        Database.instance.ReadData(ParentHomeManager.instance.StudentInfo.schoolId.ToString(), new Database.ReadDataCallback<SchoolInfoData>(ReloadSchoolDataCallback));
+    }
+
+    private void ReloadSchoolDataCallback(SchoolInfoData output)
+    {
+        if (output == null)
+        {
+            MobileGraphics.instance.Loading(false);
+            MobileGraphics.instance.DisplayMessage("An error has occurred");
+            Debug.LogWarning("Couldn't find SchoolInfo");
+            return;
+        }
+
+        ParentHomeManager.instance.SchoolData = output;
+
+        Database.instance.ReadData(Database.instance.GetUsername() + "*" + dateButton.CurrentDate, new Database.ReadDataCallback<StudentAttendanceEntryData>(GetAttendanceCallback));
     }
 
     private void GetAttendanceCallback(StudentAttendanceEntryData output)

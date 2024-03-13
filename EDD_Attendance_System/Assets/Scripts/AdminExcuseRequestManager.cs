@@ -55,6 +55,27 @@ public class AdminExcuseRequestManager : MonoBehaviour
         DisplayRequests();
     }
 
+    public void GetSchoolData()
+    {
+        Database.instance.ReadData(Database.instance.GetUsername(), new Database.ReadDataCallback<SchoolInfoData>(GetSchoolDataCallback));
+        DesktopGraphics.instance.Loading(true);
+    }
+
+    private void GetSchoolDataCallback(SchoolInfoData output)
+    {
+        if (output == null)
+        {
+            Debug.LogWarning("Couldn't find school");
+            return;
+        }
+
+        AdminHomeManager.instance.currentData = output;
+
+        DesktopGraphics.instance.Loading(false);
+
+        OnEnable();
+    }
+
     public void RequestSelected(AttendanceExcuseRequest selectedRequest)
     {
         mainScrollView.SetActive(false);

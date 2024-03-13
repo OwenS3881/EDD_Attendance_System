@@ -133,6 +133,21 @@ public class StudentExcuseRequestManager : MonoBehaviour
         }
 
         MobileGraphics.instance.Loading(true);
+        Database.instance.ReadData(studentInfo.schoolId.ToString(), new Database.ReadDataCallback<SchoolInfoData>(ReloadSchoolDataCallback));
+    }
+
+    private void ReloadSchoolDataCallback(SchoolInfoData output)
+    {
+        if (output == null)
+        {
+            MobileGraphics.instance.Loading(false);
+            MobileGraphics.instance.DisplayMessage("An error has occurred");
+            Debug.LogWarning("Couldn't find SchoolInfo");
+            return;
+        }
+
+        schoolInfo = output;
+
         Database.instance.ReadData(Database.instance.GetUsername() + "*" + dateButton.CurrentDate, new Database.ReadDataCallback<StudentAttendanceEntryData>(GetAttendanceCallback));
     }
 

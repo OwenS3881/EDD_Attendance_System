@@ -30,6 +30,13 @@ public class AdminStudentAttendanceManager : MonoBehaviour
         }
     }
 
+    public void DateChanged()
+    {
+        if (string.IsNullOrEmpty(studentIdField.text)) return;
+
+        SelectStudentDaySchedule();
+    }
+
     public void SelectStudentDaySchedule()
     {
         if (string.IsNullOrEmpty(studentIdField.text))
