@@ -50,10 +50,25 @@ public class AdminUsersManager : MonoBehaviour
             return;
         }
 
-        TeacherInfoData newTeacher = new TeacherInfoData(Int32.Parse(teacherIdInput.text), teacherNameInput.text, new List<ListWrapper<string>>(), Int32.Parse(Database.instance.GetUsername()));
-        Database.instance.SaveDataToFirebase(newTeacher);
-        DesktopGraphics.instance.DisplayMessage("Success");
-        OnEnable();
+        DesktopGraphics.instance.Loading(true);
+        Database.instance.ReadData(teacherIdInput.text, new Database.ReadDataCallback<TeacherInfoData>(VerifyCreateTeacherId));
+    }
+
+    private void VerifyCreateTeacherId(TeacherInfoData output)
+    {
+        if (output == null && string.IsNullOrEmpty(output.teacherName))
+        {
+            TeacherInfoData newTeacher = new TeacherInfoData(Int32.Parse(teacherIdInput.text), teacherNameInput.text, new List<ListWrapper<string>>(), Int32.Parse(Database.instance.GetUsername()));
+            Database.instance.SaveDataToFirebase(newTeacher);
+            DesktopGraphics.instance.Loading(false);
+            DesktopGraphics.instance.DisplayMessage("Success");
+            OnEnable();
+        }
+        else
+        {
+            DesktopGraphics.instance.Loading(false);
+            DesktopGraphics.instance.DisplayMessage("Teacher ID already exists");
+        }
     }
 
     //Student Creation Methods
@@ -82,31 +97,45 @@ public class AdminUsersManager : MonoBehaviour
             return;
         }
 
-        int[] teacherIds = new int[7];
-        for (int i = 0; i < studentClassesInput.Length; i++)
+        DesktopGraphics.instance.Loading(true);
+        Database.instance.ReadData(studentIdInput.text, new Database.ReadDataCallback<StudentInfoData>(VerifyStudentCreateId));
+    }
+
+    private void VerifyStudentCreateId(StudentInfoData output)
+    {
+        if (output == null && string.IsNullOrEmpty(output.studentName))
         {
-            if (string.IsNullOrEmpty(studentClassesInput[i].text))
+            int[] teacherIds = new int[7];
+            for (int i = 0; i < studentClassesInput.Length; i++)
             {
-                DesktopGraphics.instance.DisplayMessage($"Please enter a teacher for period {i + 1}");
-                DesktopGraphics.instance.Loading(false);
-                return;
+                if (string.IsNullOrEmpty(studentClassesInput[i].text))
+                {
+                    DesktopGraphics.instance.DisplayMessage($"Please enter a teacher for period {i + 1}");
+                    DesktopGraphics.instance.Loading(false);
+                    return;
+                }
+                if (!AdminHomeManager.instance.currentData.teacherList.Contains(Int32.Parse(studentClassesInput[i].text)))
+                {
+                    DesktopGraphics.instance.DisplayMessage($"Teacher for period {i + 1} does not exist");
+                    DesktopGraphics.instance.Loading(false);
+                    return;
+                }
+                teacherIds[i] = Int32.Parse(studentClassesInput[i].text);
             }
-            if (!AdminHomeManager.instance.currentData.teacherList.Contains(Int32.Parse(studentClassesInput[i].text)))
-            {
-                DesktopGraphics.instance.DisplayMessage($"Teacher for period {i + 1} does not exist");
-                DesktopGraphics.instance.Loading(false);
-                return;
-            }
-            teacherIds[i] = Int32.Parse(studentClassesInput[i].text);
+
+            int studentId = Int32.Parse(studentIdInput.text);
+            string studentName = studentNameInput.text;
+
+            StudentInfoData newStudent = new StudentInfoData(studentId, studentName, teacherIds, Int32.Parse(Database.instance.GetUsername()));
+            Database.instance.SaveDataToFirebase(newStudent);
+
+            StartCoroutine(AddStudentToRoster(studentId, teacherIds, 0));
         }
-
-        int studentId = Int32.Parse(studentIdInput.text);
-        string studentName = studentNameInput.text;
-
-        StudentInfoData newStudent = new StudentInfoData(studentId, studentName, teacherIds, Int32.Parse(Database.instance.GetUsername()));
-        Database.instance.SaveDataToFirebase(newStudent);
-
-        StartCoroutine(AddStudentToRoster(studentId, teacherIds, 0));
+        else
+        {
+            DesktopGraphics.instance.Loading(false);
+            DesktopGraphics.instance.DisplayMessage("Student ID already exists");
+        }
     }
 
     IEnumerator AddStudentToRoster(int studentId, int[] teacherIds, int index)

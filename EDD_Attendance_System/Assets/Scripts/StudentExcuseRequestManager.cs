@@ -192,6 +192,22 @@ public class StudentExcuseRequestManager : MonoBehaviour
 
     private void SaveRequest()
     {
+        MobileGraphics.instance.Loading(true);
+        Database.instance.ReadData(studentInfo.schoolId.ToString(), new Database.ReadDataCallback<SchoolInfoData>(SaveRequestCallback));
+    }
+
+    private void SaveRequestCallback(SchoolInfoData output)
+    {
+        if (output == null)
+        {
+            MobileGraphics.instance.Loading(false);
+            MobileGraphics.instance.DisplayMessage("An error has occurred");
+            Debug.LogWarning("Couldn't find SchoolInfo");
+            return;
+        }
+
+        schoolInfo = output;
+
         schoolInfo.excuseRequests.Add(currentRequest);
         Database.instance.SaveDataToFirebase(schoolInfo);
         MobileGraphics.instance.DisplayMessage("Success");
