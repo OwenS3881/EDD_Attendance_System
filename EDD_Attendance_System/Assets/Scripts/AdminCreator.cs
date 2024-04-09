@@ -91,7 +91,7 @@ public class AdminCreator : MonoBehaviour
         int studentId = Int32.Parse(studentIdInput.text);
         string studentName = studentNameInput.text;
 
-        StudentInfoData newStudent = new StudentInfoData(studentId, studentName, teacherIds, Int32.Parse(Database.instance.GetUsername()));
+        StudentInfoData newStudent = new StudentInfoData(studentId, studentName, teacherIds, Int32.Parse(Database.instance.GetUsername()), new List<string>());
         Database.instance.SaveDataToFirebase(newStudent);
 
         StartCoroutine(AddStudentToRoster(studentId, teacherIds, 0));
@@ -151,7 +151,7 @@ public class AdminCreator : MonoBehaviour
         MarkPresent(Int32.Parse(presentStudentField.text), Int32.Parse(presentTeacherField.text), date, presentTardyToggle.isOn);
     }
 
-    public static void MarkPresent(int studentId, int teacherId, string date, bool tardy)
+    public void MarkPresent(int studentId, int teacherId, string date, bool tardy)
     {
         Database.instance.ReadData(studentId + "*" + date, new Database.ReadDataCallbackParams<StudentAttendanceEntryData>(MarkPresentCallback), new object[] { studentId, teacherId, date, tardy });
     }

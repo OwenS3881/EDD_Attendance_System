@@ -245,6 +245,13 @@ public class AdminStudentAttendanceManager : MonoBehaviour
             }
         }
         Database.instance.SaveDataToFirebase(currentDayStudentAttendance);
+
+        if (!studentInfo.attendanceObjects.Contains(currentDayStudentAttendance.fileName))
+        {
+            studentInfo.attendanceObjects.Add(currentDayStudentAttendance.fileName);
+            Database.instance.SaveDataToFirebase(studentInfo);
+        }
+
         DesktopGraphics.instance.Loading(false);
         DesktopGraphics.instance.DisplayMessage("Success");
     }

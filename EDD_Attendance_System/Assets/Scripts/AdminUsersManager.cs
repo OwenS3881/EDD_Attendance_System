@@ -162,7 +162,7 @@ public class AdminUsersManager : MonoBehaviour
         int studentId = Int32.Parse(studentIdInput.text);
         string studentName = studentNameInput.text;
 
-        StudentInfoData newStudent = new StudentInfoData(studentId, studentName, teacherIds, Int32.Parse(Database.instance.GetUsername()));
+        StudentInfoData newStudent = new StudentInfoData(studentId, studentName, teacherIds, Int32.Parse(Database.instance.GetUsername()), new List<string>());
         Database.instance.SaveDataToFirebase(newStudent);
 
         output.studentList.Add(studentId);

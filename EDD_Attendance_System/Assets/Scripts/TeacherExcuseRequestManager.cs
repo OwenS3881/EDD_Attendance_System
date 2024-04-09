@@ -175,7 +175,60 @@ public class TeacherExcuseRequestManager : MonoBehaviour
 
     public void Approve()
     {
-        AdminCreator.MarkPresent(currentRequest.studentId, currentRequest.teacherId, currentRequest.date, false);
+        DesktopGraphics.instance.Loading(true);
+        Database.instance.ReadData(currentRequest.studentId.ToString(), new Database.ReadDataCallback<StudentInfoData>(ApproveCallback));
+    }
+
+    private void ApproveCallback(StudentInfoData output)
+    {
+        if (output == null)
+        {
+            DesktopGraphics.instance.DisplayMessage("An error has occurred");
+            return;
+        }
+
+        Database.instance.ReadData(currentRequest.studentId + "*" + currentRequest.date, new Database.ReadDataCallbackParams<StudentAttendanceEntryData>(MarkPresentCallback), new object[] { currentRequest.studentId, currentRequest.teacherId, currentRequest.date, false, output });
+    }
+
+    private void MarkPresentCallback(StudentAttendanceEntryData output, object[] additionalParams)
+    {
+        int studentId = (int)additionalParams[0];
+        int teacherId = (int)additionalParams[1];
+        string date = (string)additionalParams[2];
+        bool tardy = (bool)additionalParams[3];
+        StudentInfoData studentInfo = (StudentInfoData)additionalParams[4];
+
+        StudentAttendanceEntryData updatedEntry;
+
+        if (output == null)
+        {
+            updatedEntry = new StudentAttendanceEntryData(studentId, date, new List<string>(), new List<string>());
+        }
+        else
+        {
+            updatedEntry = output;
+        }
+
+        //presentList
+        if (!updatedEntry.presentList.Contains(teacherId.ToString())) updatedEntry.presentList.Add(teacherId.ToString());
+
+        //tardyList
+        if (tardy)
+        {
+            if (!updatedEntry.tardyList.Contains(teacherId.ToString())) updatedEntry.tardyList.Add(teacherId.ToString());
+        }
+        else
+        {
+            if (updatedEntry.tardyList.Contains(teacherId.ToString())) updatedEntry.tardyList.Remove(teacherId.ToString());
+        }
+
+        if (!studentInfo.attendanceObjects.Contains(updatedEntry.fileName))
+        {
+            studentInfo.attendanceObjects.Add(updatedEntry.fileName);
+            Database.instance.SaveDataToFirebase(studentInfo);
+        }
+
+        Database.instance.SaveDataToFirebase(updatedEntry);
 
         if (imageContent.activeSelf)
         {
@@ -187,6 +240,7 @@ public class TeacherExcuseRequestManager : MonoBehaviour
 
         excuseImage.texture = null;
 
+        DesktopGraphics.instance.Loading(false);
         OnEnable();
     }
 

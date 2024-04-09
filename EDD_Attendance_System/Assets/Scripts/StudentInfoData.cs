@@ -9,14 +9,16 @@ public class StudentInfoData : BasicData
     public string studentName;
     public int[] classList;
     public int schoolId;
+    public List<string> attendanceObjects;
 
-    public StudentInfoData(int studentId, string studentName, int[] classList, int schoolId)
+    public StudentInfoData(int studentId, string studentName, int[] classList, int schoolId, List<string> attendanceObjects)
     {
         this.fileName = studentId.ToString();
         this.studentId = studentId;
         this.studentName = studentName;
         this.classList = classList;
         this.schoolId = schoolId;
+        this.attendanceObjects = attendanceObjects;
 
         if (classList.Length != 7)
         {

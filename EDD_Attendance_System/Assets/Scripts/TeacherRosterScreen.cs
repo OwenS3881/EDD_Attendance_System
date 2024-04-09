@@ -221,10 +221,35 @@ public class TeacherRosterScreen : MonoBehaviour
                     teacherRosterAttendances[i].tardyList.Remove(teacherId);
                 }
             }
-            Database.instance.SaveDataToFirebase(teacherRosterAttendances[i]);
+            SaveAttendanceData(teacherRosterAttendances[i]);
         }
 
         DesktopGraphics.instance.Loading(false);
         DesktopGraphics.instance.DisplayMessage("Success");
+    }
+
+    private void SaveAttendanceData(StudentAttendanceEntryData attendanceData)
+    {
+        Database.instance.ReadData(attendanceData.studentId.ToString(), new Database.ReadDataCallbackParams<StudentInfoData>(SaveAttendanceDataCallback), new object[] {attendanceData});
+    }
+
+    private void SaveAttendanceDataCallback(StudentInfoData output, object[] additionalParams)
+    {
+        StudentAttendanceEntryData updatedEntry = (StudentAttendanceEntryData)additionalParams[0];
+
+        if (output == null)
+        {
+            DesktopGraphics.instance.DisplayMessage("An error has occurred");
+            return;
+        }
+
+        if (!output.attendanceObjects.Contains(updatedEntry.fileName))
+        {
+            output.attendanceObjects.Add(updatedEntry.fileName);
+            Database.instance.SaveDataToFirebase(output);
+        }
+
+
+        Database.instance.SaveDataToFirebase(updatedEntry);
     }
 }
