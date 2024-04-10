@@ -202,6 +202,12 @@ public class StudentFreePeriodManager : MonoBehaviour
         checkInButton.SetActive(false);
         checkOutButton.SetActive(false);
 
+        if (!studentInfo.attendanceObjects.Contains(attendanceData.fileName))
+        {
+            studentInfo.attendanceObjects.Add(attendanceData.fileName);
+            Database.instance.SaveDataToFirebase(studentInfo);
+        }
+
         Database.instance.SaveDataToFirebase(attendanceData);
     }
 
