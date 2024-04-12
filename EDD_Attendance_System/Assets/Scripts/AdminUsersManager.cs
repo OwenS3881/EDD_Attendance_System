@@ -20,6 +20,20 @@ public class AdminUsersManager : MonoBehaviour
     [SerializeField] private TMP_InputField studentNameInput;
     [SerializeField] private TMP_InputField[] studentClassesInput;
 
+    [Header("Student View Fields")]
+    [SerializeField] private GameObject studentViewParent;
+    [SerializeField] private GameObject studentViewPrefab;
+    [SerializeField] private GridLayoutGroup studentViewGrid;
+    [SerializeField] private float studentViewParentDefaultHeight;
+    private List<StudentInfoData> studentViewData = new List<StudentInfoData>();
+
+    [Header("Teacher View Fields")]
+    [SerializeField] private GameObject teacherViewParent;
+    [SerializeField] private GameObject teacherViewPrefab;
+    [SerializeField] private GridLayoutGroup teacherViewGrid;
+    [SerializeField] private float teacherViewParentDefaultHeight;
+    private List<TeacherInfoData> teacherViewData = new List<TeacherInfoData>();
+
     private void OnEnable()
     {
         mainScroll.SetActive(true);
@@ -77,8 +91,10 @@ public class AdminUsersManager : MonoBehaviour
             return;
         }
 
-        output.teacherList.Add(Int32.Parse(teacherIdInput.text));
         AdminHomeManager.instance.currentData = output;
+
+        AdminHomeManager.instance.currentData.teacherList.Add(Int32.Parse(teacherIdInput.text));
+        
         Database.instance.SaveDataToFirebase(AdminHomeManager.instance.currentData);
 
         TeacherInfoData newTeacher = new TeacherInfoData(Int32.Parse(teacherIdInput.text), teacherNameInput.text, new List<ListWrapper<string>>(), Int32.Parse(Database.instance.GetUsername()));
@@ -141,6 +157,8 @@ public class AdminUsersManager : MonoBehaviour
             return;
         }
 
+        AdminHomeManager.instance.currentData = output;
+
         int[] teacherIds = new int[7];
         for (int i = 0; i < studentClassesInput.Length; i++)
         {
@@ -165,8 +183,7 @@ public class AdminUsersManager : MonoBehaviour
         StudentInfoData newStudent = new StudentInfoData(studentId, studentName, teacherIds, Int32.Parse(Database.instance.GetUsername()), new List<string>());
         Database.instance.SaveDataToFirebase(newStudent);
 
-        output.studentList.Add(studentId);
-        AdminHomeManager.instance.currentData = output;
+        AdminHomeManager.instance.currentData.studentList.Add(studentId);
         Database.instance.SaveDataToFirebase(AdminHomeManager.instance.currentData);
 
         StartCoroutine(AddStudentToRoster(studentId, teacherIds, 0));
@@ -224,5 +241,171 @@ public class AdminUsersManager : MonoBehaviour
             DesktopGraphics.instance.DisplayMessage("Success");
             OnEnable();
         }
+    }
+
+    //View Student Methods
+    public void LoadStudentView()
+    {
+        DesktopGraphics.instance.Loading(true);
+
+        ClearStudentViewContainer();
+
+        Database.instance.ReadData(Database.instance.GetUsername(), new Database.ReadDataCallback<SchoolInfoData>(LoadStudentViewCallback));
+    }
+
+    private void LoadStudentViewCallback(SchoolInfoData output)
+    {
+        if (output == null)
+        {
+            Debug.LogWarning("School not found");
+            DesktopGraphics.instance.DisplayMessage("An error has occurred");
+            DesktopGraphics.instance.Loading(false);
+            return;
+        }
+
+        AdminHomeManager.instance.currentData = output;
+
+        foreach (int student in AdminHomeManager.instance.currentData.studentList)
+        {
+            Database.instance.ReadData(student.ToString(), new Database.ReadDataCallback<StudentInfoData>(GetStudentCallback));
+        }
+
+    }
+
+    private void GetStudentCallback(StudentInfoData output)
+    {
+        if (output == null)
+        {
+            Debug.LogWarning("No student found");
+            //dont't return, keep going
+        }
+
+        studentViewData.Add(output);
+
+        DisplayStudentData();
+    }
+
+    private void DisplayStudentData()
+    {
+        if (studentViewData.Count < AdminHomeManager.instance.currentData.studentList.Count)
+        {
+            return;
+        }
+
+        studentViewData.Sort();
+
+        foreach (StudentInfoData student in studentViewData)
+        {
+            StudentViewBox newBox = Instantiate(studentViewPrefab, studentViewParent.transform).GetComponent<StudentViewBox>();
+
+            newBox.StudentName = student.studentName;
+            newBox.Id = student.studentId.ToString();
+        }
+
+        UpdateStudentViewParentHeight();
+
+        DesktopGraphics.instance.Loading(false);
+    }
+
+    private void ClearStudentViewContainer()
+    {
+        foreach (Transform t in studentViewParent.GetComponentsInChildren<Transform>())
+        {
+            if (t.Equals(studentViewParent.transform)) continue;
+
+            Destroy(t.gameObject);
+        }
+
+        studentViewData.Clear();
+
+        UpdateStudentViewParentHeight();
+    }
+
+    private void UpdateStudentViewParentHeight()
+    {
+        studentViewParent.GetComponent<RectTransform>().sizeDelta = new Vector2(studentViewParent.GetComponent<RectTransform>().sizeDelta.x, studentViewParentDefaultHeight + (studentViewData.Count * (studentViewGrid.cellSize.y + studentViewGrid.spacing.y)));
+    }
+
+    //View Teacher Methods
+    public void LoadTeacherView()
+    {
+        DesktopGraphics.instance.Loading(true);
+
+        ClearTeacherViewContainer();
+
+        Database.instance.ReadData(Database.instance.GetUsername(), new Database.ReadDataCallback<SchoolInfoData>(LoadTeacherViewCallback));
+    }
+
+    private void LoadTeacherViewCallback(SchoolInfoData output)
+    {
+        if (output == null)
+        {
+            Debug.LogWarning("School not found");
+            DesktopGraphics.instance.DisplayMessage("An error has occurred");
+            DesktopGraphics.instance.Loading(false);
+            return;
+        }
+
+        AdminHomeManager.instance.currentData = output;
+
+        foreach (int teacher in AdminHomeManager.instance.currentData.teacherList)
+        {
+            Database.instance.ReadData(teacher.ToString(), new Database.ReadDataCallback<TeacherInfoData>(GetTeacherCallback));
+        }
+
+    }
+
+    private void GetTeacherCallback(TeacherInfoData output)
+    {
+        if (output == null)
+        {
+            Debug.LogWarning("No teacher found");
+            //dont't return, keep going
+        }
+
+        teacherViewData.Add(output);
+
+        DisplayTeacherData();
+    }
+
+    private void DisplayTeacherData()
+    {
+        if (teacherViewData.Count < AdminHomeManager.instance.currentData.teacherList.Count)
+        {
+            return;
+        }
+
+        teacherViewData.Sort();
+
+        foreach (TeacherInfoData teacher in teacherViewData)
+        {
+            TeacherViewBox newBox = Instantiate(teacherViewPrefab, teacherViewParent.transform).GetComponent<TeacherViewBox>();
+
+            newBox.TeacherName = teacher.teacherName;
+            newBox.Id = teacher.teacherId.ToString();
+        }
+
+        UpdateTeacherViewParentHeight();
+
+        DesktopGraphics.instance.Loading(false);
+    }
+
+    private void ClearTeacherViewContainer()
+    {
+        foreach (Transform t in teacherViewParent.GetComponentsInChildren<Transform>())
+        {
+            if (t.Equals(teacherViewParent.transform)) continue;
+
+            Destroy(t.gameObject);
+        }
+
+        teacherViewData.Clear();
+
+        UpdateTeacherViewParentHeight();
+    }
+
+    private void UpdateTeacherViewParentHeight()
+    {
+        teacherViewParent.GetComponent<RectTransform>().sizeDelta = new Vector2(teacherViewParent.GetComponent<RectTransform>().sizeDelta.x, teacherViewParentDefaultHeight + (teacherViewData.Count * (teacherViewGrid.cellSize.y + teacherViewGrid.spacing.y)));
     }
 }

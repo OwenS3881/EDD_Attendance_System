@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 [System.Serializable]
-public class TeacherInfoData : BasicData
+public class TeacherInfoData : BasicData , IComparable
 {
     public int teacherId;
     public string teacherName;
@@ -42,5 +43,12 @@ public class TeacherInfoData : BasicData
                 }
             }
         }
+    }
+
+    public int CompareTo(object other)
+    {
+        TeacherInfoData otherData = other as TeacherInfoData;
+
+        return this.fileName.CompareTo(otherData.fileName);
     }
 }

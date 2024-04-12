@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 [System.Serializable]
-public class StudentInfoData : BasicData
+public class StudentInfoData : BasicData , IComparable
 {
     public int studentId;
     public string studentName;
@@ -24,5 +25,12 @@ public class StudentInfoData : BasicData
         {
             Debug.LogError("Invalid schedule length");
         }
+    }
+
+    public int CompareTo(object other)
+    {
+        StudentInfoData otherData = other as StudentInfoData;
+
+        return this.fileName.CompareTo(otherData.fileName);
     }
 }
