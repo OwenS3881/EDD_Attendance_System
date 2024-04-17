@@ -34,6 +34,12 @@ public class AdminUsersManager : MonoBehaviour
     [SerializeField] private float teacherViewParentDefaultHeight;
     private List<TeacherInfoData> teacherViewData = new List<TeacherInfoData>();
 
+    [Header("Delete Student Fields")]
+    [SerializeField] private TMP_InputField deleteStudentInput;
+    [SerializeField] private GameObject deleteStudentSureButton1;
+    [SerializeField] private GameObject deleteStudentSureButton2;
+    [SerializeField] private GameObject cancelDeleteButton;
+
     private void OnEnable()
     {
         mainScroll.SetActive(true);
@@ -407,5 +413,74 @@ public class AdminUsersManager : MonoBehaviour
     private void UpdateTeacherViewParentHeight()
     {
         teacherViewParent.GetComponent<RectTransform>().sizeDelta = new Vector2(teacherViewParent.GetComponent<RectTransform>().sizeDelta.x, teacherViewParentDefaultHeight + (teacherViewData.Count * (teacherViewGrid.cellSize.y + teacherViewGrid.spacing.y)));
+    }
+
+    //Delete Student Methods
+    public void CancelDelete()
+    {
+        deleteStudentSureButton1.SetActive(false);
+        deleteStudentSureButton2.SetActive(false);
+        cancelDeleteButton.SetActive(false);
+    }
+
+    public void InitiateDelete()
+    {
+        Debug.Log("Deleting...");
+
+        /*
+         * Areas where student needs to be deleted:
+         *      School's studentList
+         *      Student's attendanceObjects
+         *      Student's Teachers' rosters
+         *      Student object itself
+        */
+
+        if (string.IsNullOrEmpty(deleteStudentInput.text))
+        {
+            DesktopGraphics.instance.DisplayMessage("Enter a Student ID");
+            CancelDelete();
+            return;
+        }
+
+        DesktopGraphics.instance.Loading(true);
+
+        Database.instance.ReadData(deleteStudentInput.text, new Database.ReadDataCallback<StudentInfoData>(DeleteStudentCallback));
+    }
+
+    private void DeleteStudentCallback(StudentInfoData output)
+    {
+        if (output == null)
+        {
+            DesktopGraphics.instance.DisplayMessage("Student ID does not exist");
+            DesktopGraphics.instance.Loading(false);
+            CancelDelete();
+            return;
+        }
+
+        //Clearing attendance objects
+        foreach (string attendanceObject in output.attendanceObjects)
+        {
+            Database.instance.DeleteData(attendanceObject);
+        }
+
+        //Clear from rosters
+        for (int i = 0; i < output.classList.Length; i++)
+        {
+            Database.instance.ReadData(output.classList[i].ToString(), new Database.ReadDataCallbackParams<TeacherInfoData>(DeleteStudentFromRosterCallback), new object[] { i });
+        }
+    }
+
+    private void DeleteStudentFromRosterCallback(TeacherInfoData output, object[] additionalParams)
+    {
+        int index = (int)additionalParams[0];
+
+        output.roster[index].internalList.Remove(deleteStudentInput.text);
+
+        if (output.roster[index].internalList.Count <= 0)
+        {
+            output.roster[index].Add("Default");
+        }
+
+        Database.instance.SaveDataToFirebase(output);
     }
 }

@@ -92,6 +92,14 @@ public class Database : MonoBehaviour
         
     }
 
+    public void DeleteData(string fileName)
+    {
+        RestClient.Delete(databaseURL + "/" + fileName + ".json").Then(response =>
+        {
+            Debug.Log("Deleted " + fileName);
+        });
+    }
+
     public delegate void ReadDataCallback<T>(T output);
     public void ReadData<T>(string fileName, ReadDataCallback<T> callback)
     {
