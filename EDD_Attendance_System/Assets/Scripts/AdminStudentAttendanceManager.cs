@@ -51,6 +51,12 @@ public class AdminStudentAttendanceManager : MonoBehaviour
             return;
         }
 
+        if (!AdminHomeManager.instance.currentData.studentList.Contains(Int32.Parse(studentIdField.text)))
+        {
+            DesktopGraphics.instance.DisplayMessage("Student ID does not exist");
+            return;
+        }
+
         DesktopGraphics.instance.Loading(true);
         Database.instance.ReadData(studentIdField.text, new Database.ReadDataCallback<StudentInfoData>(GetStudentInfo));
     }

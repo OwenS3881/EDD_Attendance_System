@@ -13060,7 +13060,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Create a Student
+  m_text: Delete a Student
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d5926795525834a9192b3a3eb5097d6e, type: 2}
   m_sharedMaterial: {fileID: 6688207153249883843, guid: d5926795525834a9192b3a3eb5097d6e, type: 2}

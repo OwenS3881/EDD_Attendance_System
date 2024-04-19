@@ -442,6 +442,13 @@ public class AdminUsersManager : MonoBehaviour
             return;
         }
 
+        if (!AdminHomeManager.instance.currentData.studentList.Contains(Int32.Parse(deleteStudentInput.text)))
+        {
+            DesktopGraphics.instance.DisplayMessage("Student ID does not exist");
+            CancelDelete();
+            return;
+        }
+
         DesktopGraphics.instance.Loading(true);
 
         Database.instance.ReadData(deleteStudentInput.text, new Database.ReadDataCallback<StudentInfoData>(DeleteStudentCallback));
@@ -468,6 +475,29 @@ public class AdminUsersManager : MonoBehaviour
         {
             Database.instance.ReadData(output.classList[i].ToString(), new Database.ReadDataCallbackParams<TeacherInfoData>(DeleteStudentFromRosterCallback), new object[] { i });
         }
+
+        Database.instance.ReadData(output.schoolId.ToString(), new Database.ReadDataCallback<SchoolInfoData>(FinalDeleteStudentCallback));
+    }
+
+    private void FinalDeleteStudentCallback(SchoolInfoData output)
+    {
+        if (output == null)
+        {
+            Debug.LogError("Not good");
+        }
+
+        AdminHomeManager.instance.currentData = output;
+
+        //Remove student from student list
+        AdminHomeManager.instance.currentData.studentList.Remove(Int32.Parse(deleteStudentInput.text));
+
+        //Remove student object
+        Database.instance.DeleteData(deleteStudentInput.text);
+        DesktopGraphics.instance.Loading(false);
+        DesktopGraphics.instance.DisplayMessage($"Deleted Student with ID: {deleteStudentInput.text}");
+
+        CancelDelete();
+        deleteStudentInput.text = "";
     }
 
     private void DeleteStudentFromRosterCallback(TeacherInfoData output, object[] additionalParams)
