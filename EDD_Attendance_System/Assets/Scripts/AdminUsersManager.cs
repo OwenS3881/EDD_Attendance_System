@@ -491,6 +491,8 @@ public class AdminUsersManager : MonoBehaviour
         //Remove student from student list
         AdminHomeManager.instance.currentData.studentList.Remove(Int32.Parse(deleteStudentInput.text));
 
+        Database.instance.SaveDataToFirebase(AdminHomeManager.instance.currentData);
+
         //Remove student object
         Database.instance.DeleteData(deleteStudentInput.text);
         DesktopGraphics.instance.Loading(false);
