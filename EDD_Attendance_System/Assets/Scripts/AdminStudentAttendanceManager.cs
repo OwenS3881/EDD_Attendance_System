@@ -51,7 +51,7 @@ public class AdminStudentAttendanceManager : MonoBehaviour
             return;
         }
 
-        if (!AdminHomeManager.instance.currentData.studentList.Contains(Int32.Parse(studentIdField.text)))
+        if (!AdminHomeManager.instance.currentData.studentList.Contains(studentIdField.text))
         {
             DesktopGraphics.instance.DisplayMessage("Student ID does not exist");
             return;
@@ -81,7 +81,7 @@ public class AdminStudentAttendanceManager : MonoBehaviour
     {
         if (output == null)
         {
-            currentDayStudentAttendance = new StudentAttendanceEntryData(Int32.Parse(studentIdField.text), dateButton.CurrentDate, new List<string>(), new List<string>());
+            currentDayStudentAttendance = new StudentAttendanceEntryData(studentIdField.text, dateButton.CurrentDate, new List<string>(), new List<string>());
         }
         else
         {
@@ -159,9 +159,9 @@ public class AdminStudentAttendanceManager : MonoBehaviour
         return new List<int>();
     }
 
-    private void AddTeacherNameToIDField(int teacherId, RosterViewBox viewBox)
+    private void AddTeacherNameToIDField(string teacherId, RosterViewBox viewBox)
     {
-        Database.instance.ReadData(teacherId.ToString(), new Database.ReadDataCallbackParams<TeacherInfoData>(AddTeacherNameToIDFieldCallback), new object[] { viewBox });
+        Database.instance.ReadData(teacherId, new Database.ReadDataCallbackParams<TeacherInfoData>(AddTeacherNameToIDFieldCallback), new object[] { viewBox });
     }
 
     private void AddTeacherNameToIDFieldCallback(TeacherInfoData output, object[] additionalParams)

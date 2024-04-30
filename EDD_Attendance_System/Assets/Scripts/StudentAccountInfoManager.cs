@@ -88,14 +88,14 @@ public class StudentAccountInfoManager : MonoBehaviour
         {
             GameObject classListEntry = Instantiate(classListEntryPrefab, classListContentParent.transform);
 
-            classListEntry.GetComponentInChildren<TMP_Text>().text = currentDayStudent.classList[i].ToString();
+            classListEntry.GetComponentInChildren<TMP_Text>().text = currentDayStudent.classList[i];
             AddTeacherNameToIDField(currentDayStudent.classList[i], classListEntry.GetComponentInChildren<TMP_Text>(), i + 1);
         }
     }
 
-    private void AddTeacherNameToIDField(int teacherId, TMP_Text field, int period)
+    private void AddTeacherNameToIDField(string teacherId, TMP_Text field, int period)
     {
-        Database.instance.ReadData(teacherId.ToString(), new Database.ReadDataCallbackParams<TeacherInfoData>(AddTeacherNameToIDFieldCallback), new object[] { field, period });
+        Database.instance.ReadData(teacherId, new Database.ReadDataCallbackParams<TeacherInfoData>(AddTeacherNameToIDFieldCallback), new object[] { field, period });
     }
 
     private void AddTeacherNameToIDFieldCallback(TeacherInfoData output, object[] additionalParams)

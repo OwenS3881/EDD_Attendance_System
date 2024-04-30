@@ -6,12 +6,12 @@ using UnityEngine;
 [System.Serializable]
 public class StudentAttendanceEntryData : BasicData, IComparable
 {
-    public int studentId;
+    public string studentId;
     public string date;
     public List<string> presentList;
     public List<string> tardyList;
 
-    public StudentAttendanceEntryData(int studentId, string date, List<string> presentList, List<string> tardyList)
+    public StudentAttendanceEntryData(string studentId, string date, List<string> presentList, List<string> tardyList)
     {
         this.fileName = studentId + "*" + date;
         this.studentId = studentId;

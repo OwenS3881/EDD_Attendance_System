@@ -33,9 +33,9 @@ public class ParentExcuseRequestManager : MonoBehaviour
 
         List<string> optionsList = new List<string>();
 
-        foreach (int id in ParentHomeManager.instance.StudentInfo.classList)
+        foreach (string id in ParentHomeManager.instance.StudentInfo.classList)
         {
-            optionsList.Add(id.ToString());
+            optionsList.Add(id);
         }
 
         teacherIdDropdown.AddOptions(optionsList);
@@ -46,9 +46,9 @@ public class ParentExcuseRequestManager : MonoBehaviour
         }
     }
 
-    private void AddTeacherNameToDropdown(int teacherId, int dropdownListIndex)
+    private void AddTeacherNameToDropdown(string teacherId, int dropdownListIndex)
     {
-        Database.instance.ReadData(teacherId.ToString(), new Database.ReadDataCallbackParams<TeacherInfoData>(AddTeacherNameToDropdownCallback), new object[] { dropdownListIndex });
+        Database.instance.ReadData(teacherId, new Database.ReadDataCallbackParams<TeacherInfoData>(AddTeacherNameToDropdownCallback), new object[] { dropdownListIndex });
     }
 
     private void AddTeacherNameToDropdownCallback(TeacherInfoData output, object[] additionalParams)
@@ -84,7 +84,7 @@ public class ParentExcuseRequestManager : MonoBehaviour
         }
 
         DesktopGraphics.instance.Loading(true);
-        Database.instance.ReadData(ParentHomeManager.instance.StudentInfo.schoolId.ToString(), new Database.ReadDataCallback<SchoolInfoData>(ReloadSchoolDataCallback));
+        Database.instance.ReadData(ParentHomeManager.instance.StudentInfo.schoolId, new Database.ReadDataCallback<SchoolInfoData>(ReloadSchoolDataCallback));
     }
 
     private void ReloadSchoolDataCallback(SchoolInfoData output)
@@ -104,11 +104,11 @@ public class ParentExcuseRequestManager : MonoBehaviour
 
     private void GetAttendanceCallback(StudentAttendanceEntryData output)
     {
-        int selectedTeacher = Int32.Parse(teacherIdDropdown.options[teacherIdDropdown.value].text.Split(" - ")[0]);
+        string selectedTeacher = teacherIdDropdown.options[teacherIdDropdown.value].text.Split(" - ")[0];
 
         if (output != null)
         {
-            if (output.presentList.Contains(selectedTeacher.ToString()) && !output.tardyList.Contains(selectedTeacher.ToString()))
+            if (output.presentList.Contains(selectedTeacher) && !output.tardyList.Contains(selectedTeacher))
             {
                 DesktopGraphics.instance.DisplayMessage("Already present for this day");
                 DesktopGraphics.instance.Loading(false);

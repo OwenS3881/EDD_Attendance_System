@@ -160,7 +160,7 @@ public class AdminLoginManager : MonoBehaviour
 
     void OnRegisterSuccess(RegisterPlayFabUserResult result)
     {
-        SchoolInfoData newSchool = new SchoolInfoData(Int32.Parse(createIdInput.text), "New School", new List<int>(), new List<int>(), new List<ScheduledPeriods>(), new List<ScheduledPeriods>(), new List<AttendanceExcuseRequest>());
+        SchoolInfoData newSchool = new SchoolInfoData(createIdInput.text, "New School", new List<string>(), new List<string>(), new List<ScheduledPeriods>(), new List<ScheduledPeriods>(), new List<AttendanceExcuseRequest>());
         Database.instance.SaveDataToFirebase(newSchool);
         OutputMessage("Account regsitered successfully!");
         DesktopGraphics.instance.Loading(false);

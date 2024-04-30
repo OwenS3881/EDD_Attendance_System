@@ -87,9 +87,9 @@ public class AdminHomeManager : MonoBehaviour
     private void InitializeFreePeriods()
     {
 
-        foreach (int i in Database.freePeriodIds)
+        foreach (string i in Database.freePeriodIds)
         {
-            TeacherInfoData freePeriod = new TeacherInfoData(i, $"FREE-{i}", new List<ListWrapper<string>>(), 0);
+            TeacherInfoData freePeriod = new TeacherInfoData(i, $"FREE-{i}", new List<ListWrapper<string>>(),"0");
             Database.instance.SaveDataToFirebase(freePeriod);
         }
     }

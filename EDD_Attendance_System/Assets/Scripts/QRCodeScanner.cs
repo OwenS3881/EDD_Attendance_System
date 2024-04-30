@@ -58,7 +58,7 @@ public class QRCodeScanner : MonoBehaviour
         studentInfo = output;
 
 
-        Database.instance.ReadData(studentInfo.schoolId.ToString(), new Database.ReadDataCallback<SchoolInfoData>(GetSchoolDataCallback));
+        Database.instance.ReadData(studentInfo.schoolId, new Database.ReadDataCallback<SchoolInfoData>(GetSchoolDataCallback));
     }
 
     private void GetSchoolDataCallback(SchoolInfoData output)
@@ -200,13 +200,13 @@ public class QRCodeScanner : MonoBehaviour
         }
 
         MobileGraphics.instance.Loading(true);
-        Database.instance.ReadData(Int32.Parse(Database.instance.GetUsername()) + "*" + splitFields[2], new Database.ReadDataCallbackParams<StudentAttendanceEntryData>(MarkPresentCallback), new object[] { Int32.Parse(Database.instance.GetUsername()), Int32.Parse(splitFields[1]), splitFields[2], false });
+        Database.instance.ReadData(Database.instance.GetUsername() + "*" + splitFields[2], new Database.ReadDataCallbackParams<StudentAttendanceEntryData>(MarkPresentCallback), new object[] { Database.instance.GetUsername(), splitFields[1], splitFields[2], false });
     }
 
     private void MarkPresentCallback(StudentAttendanceEntryData output, object[] additionalParams)
     {
-        int studentId = (int)additionalParams[0];
-        int teacherId = (int)additionalParams[1];
+        string studentId = (string)additionalParams[0];
+        string teacherId = (string)additionalParams[1];
         string date = (string)additionalParams[2];
         bool tardy = (bool)additionalParams[3];
 
@@ -222,16 +222,16 @@ public class QRCodeScanner : MonoBehaviour
         }
 
         //presentList
-        if (!updatedEntry.presentList.Contains(teacherId.ToString())) updatedEntry.presentList.Add(teacherId.ToString());
+        if (!updatedEntry.presentList.Contains(teacherId)) updatedEntry.presentList.Add(teacherId);
 
         //tardyList
         if (tardy)
         {
-            if (!updatedEntry.tardyList.Contains(teacherId.ToString())) updatedEntry.tardyList.Add(teacherId.ToString());
+            if (!updatedEntry.tardyList.Contains(teacherId)) updatedEntry.tardyList.Add(teacherId);
         }
         else
         {
-            if (updatedEntry.tardyList.Contains(teacherId.ToString())) updatedEntry.tardyList.Remove(teacherId.ToString());
+            if (updatedEntry.tardyList.Contains(teacherId)) updatedEntry.tardyList.Remove(teacherId);
         }
 
         if (!studentInfo.attendanceObjects.Contains(updatedEntry.fileName))

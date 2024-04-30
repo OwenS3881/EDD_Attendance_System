@@ -86,13 +86,13 @@ public class TeacherRosterScreen : MonoBehaviour
         int period = Int32.Parse(periodField.text);
         for (int i = 0; i < currentTeacherAttendance.roster[period - 1].internalList.Count; i++)
         {
-            Database.instance.ReadData(currentTeacherAttendance.roster[period - 1].internalList[i] + "*" + dateButton.CurrentDate, new Database.ReadDataCallbackParams<StudentAttendanceEntryData>(SelectTeacherGetStudentCallback), new object[] { Int32.Parse(currentTeacherAttendance.roster[period - 1].internalList[i]) });
+            Database.instance.ReadData(currentTeacherAttendance.roster[period - 1].internalList[i] + "*" + dateButton.CurrentDate, new Database.ReadDataCallbackParams<StudentAttendanceEntryData>(SelectTeacherGetStudentCallback), new object[] { currentTeacherAttendance.roster[period - 1].internalList[i] });
         }
     }
 
     private void SelectTeacherGetStudentCallback(StudentAttendanceEntryData output, object[] additionalParams)
     {
-        int studentId = (int)additionalParams[0];
+        string studentId = (string)additionalParams[0];
 
         StudentAttendanceEntryData student;
 
@@ -124,7 +124,7 @@ public class TeacherRosterScreen : MonoBehaviour
         {
             RosterViewBox rosterBox = Instantiate(rosterViewBoxPrefab, rosterViewContainer.transform).GetComponent<RosterViewBox>();
 
-            rosterBox.mainLabel.text = teacherRosterAttendances[i].studentId.ToString();
+            rosterBox.mainLabel.text = teacherRosterAttendances[i].studentId;
 
             AddStudentNameToIDField(teacherRosterAttendances[i].studentId, rosterBox.mainLabel);
 
@@ -144,9 +144,9 @@ public class TeacherRosterScreen : MonoBehaviour
         DesktopGraphics.instance.Loading(false);
     }
 
-    private void AddStudentNameToIDField(int studentId, TMP_Text field)
+    private void AddStudentNameToIDField(string studentId, TMP_Text field)
     {
-        Database.instance.ReadData(studentId.ToString(), new Database.ReadDataCallbackParams<StudentInfoData>(AddStudentNameToIDFieldCallback), new object[] { field });
+        Database.instance.ReadData(studentId, new Database.ReadDataCallbackParams<StudentInfoData>(AddStudentNameToIDFieldCallback), new object[] { field });
     }
 
     private void AddStudentNameToIDFieldCallback(StudentInfoData output, object[] additionalParams)
@@ -230,7 +230,7 @@ public class TeacherRosterScreen : MonoBehaviour
 
     private void SaveAttendanceData(StudentAttendanceEntryData attendanceData)
     {
-        Database.instance.ReadData(attendanceData.studentId.ToString(), new Database.ReadDataCallbackParams<StudentInfoData>(SaveAttendanceDataCallback), new object[] {attendanceData});
+        Database.instance.ReadData(attendanceData.studentId, new Database.ReadDataCallbackParams<StudentInfoData>(SaveAttendanceDataCallback), new object[] {attendanceData});
     }
 
     private void SaveAttendanceDataCallback(StudentInfoData output, object[] additionalParams)

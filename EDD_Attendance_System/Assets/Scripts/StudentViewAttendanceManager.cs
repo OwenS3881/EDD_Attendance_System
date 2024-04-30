@@ -87,7 +87,7 @@ public class StudentViewAttendanceManager : MonoBehaviour
 
     private void GetSchoolData()
     {
-        Database.instance.ReadData(studentInfo.schoolId.ToString(), new Database.ReadDataCallback<SchoolInfoData>(GetSchoolDataCallback));
+        Database.instance.ReadData(studentInfo.schoolId, new Database.ReadDataCallback<SchoolInfoData>(GetSchoolDataCallback));
     }
 
     private void GetSchoolDataCallback(SchoolInfoData output)
@@ -121,7 +121,7 @@ public class StudentViewAttendanceManager : MonoBehaviour
     {
         if (output == null)
         {
-            currentDayStudentAttendance = new StudentAttendanceEntryData(Int32.Parse(Database.instance.GetUsername()), dayAttendanceDate.CurrentDate, new List<string>(), new List<string>());
+            currentDayStudentAttendance = new StudentAttendanceEntryData(Database.instance.GetUsername(), dayAttendanceDate.CurrentDate, new List<string>(), new List<string>());
         }
         else
         {
@@ -147,18 +147,18 @@ public class StudentViewAttendanceManager : MonoBehaviour
 
             ClassAttendanceView viewBox = Instantiate(classAttendanceViewPrefab, classAttendanceViewContentParent.transform).GetComponent<ClassAttendanceView>();
 
-            viewBox.SetTeacherText(studentInfo.classList[p - 1].ToString());
+            viewBox.SetTeacherText(studentInfo.classList[p - 1]);
             AddTeacherNameToIDField(studentInfo.classList[p - 1], viewBox);
 
-            if (!currentDayStudentAttendance.presentList.Contains(studentInfo.classList[p - 1].ToString()))
+            if (!currentDayStudentAttendance.presentList.Contains(studentInfo.classList[p - 1]))
             {
                 viewBox.SetStatus(AttendanceStatus.Absent);
             }
-            else if (currentDayStudentAttendance.tardyList.Contains(studentInfo.classList[p - 1].ToString()))
+            else if (currentDayStudentAttendance.tardyList.Contains(studentInfo.classList[p - 1]))
             {
                 viewBox.SetStatus(AttendanceStatus.Tardy);
             }
-            else if (currentDayStudentAttendance.presentList.Contains(studentInfo.classList[p - 1].ToString()))
+            else if (currentDayStudentAttendance.presentList.Contains(studentInfo.classList[p - 1]))
             {
                 viewBox.SetStatus(AttendanceStatus.Present);
             }
@@ -202,9 +202,9 @@ public class StudentViewAttendanceManager : MonoBehaviour
         return new List<int>();
     }
 
-    private void AddTeacherNameToIDField(int teacherId, ClassAttendanceView viewBox)
+    private void AddTeacherNameToIDField(string teacherId, ClassAttendanceView viewBox)
     {
-        Database.instance.ReadData(teacherId.ToString(), new Database.ReadDataCallbackParams<TeacherInfoData>(AddTeacherNameToIDFieldCallback), new object[] { viewBox });
+        Database.instance.ReadData(teacherId, new Database.ReadDataCallbackParams<TeacherInfoData>(AddTeacherNameToIDFieldCallback), new object[] { viewBox });
     }
 
     private void AddTeacherNameToIDFieldCallback(TeacherInfoData output, object[] additionalParams)
@@ -294,7 +294,7 @@ public class StudentViewAttendanceManager : MonoBehaviour
 
         if (output == null)
         {
-            newData = new StudentAttendanceEntryData(Int32.Parse(Database.instance.GetUsername()), date, new List<string>(), new List<string>());
+            newData = new StudentAttendanceEntryData(Database.instance.GetUsername(), date, new List<string>(), new List<string>());
         }
         else
         {
@@ -417,7 +417,7 @@ public class StudentViewAttendanceManager : MonoBehaviour
 
         if (output == null)
         {
-            newData = new StudentAttendanceEntryData(Int32.Parse(Database.instance.GetUsername()), date, new List<string>(), new List<string>());
+            newData = new StudentAttendanceEntryData(Database.instance.GetUsername(), date, new List<string>(), new List<string>());
         }
         else
         {
@@ -449,7 +449,7 @@ public class StudentViewAttendanceManager : MonoBehaviour
                 totalCount++;
 
 
-                if (!data.presentList.Contains(studentInfo.classList[i].ToString())) //absent
+                if (!data.presentList.Contains(studentInfo.classList[i])) //absent
                 {
                     absentCount++;
 
@@ -457,7 +457,7 @@ public class StudentViewAttendanceManager : MonoBehaviour
                     newContainer.SetStatus(AttendanceStatus.Absent);
                     newContainer.SetTeacherText($"{studentInfo.classList[i]} - {DateButton.ConvertToNiceDate(data.date)}");
                 }
-                else if (data.tardyList.Contains(studentInfo.classList[i].ToString())) // tardy
+                else if (data.tardyList.Contains(studentInfo.classList[i])) // tardy
                 {
                     tardyCount++;
 

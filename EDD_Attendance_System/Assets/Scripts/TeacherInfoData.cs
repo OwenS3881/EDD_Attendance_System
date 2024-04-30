@@ -6,10 +6,10 @@ using System;
 [System.Serializable]
 public class TeacherInfoData : BasicData , IComparable
 {
-    public int teacherId;
+    public string teacherId;
     public string teacherName;
     public List<ListWrapper<string>> roster;
-    public int schoolId;
+    public string schoolId;
 
     public TeacherInfoData(TeacherInfoData clone)
     {
@@ -20,7 +20,7 @@ public class TeacherInfoData : BasicData , IComparable
         this.schoolId = clone.schoolId;
     }
 
-    public TeacherInfoData(int teacherId, string teacherName, List<ListWrapper<string>> roster, int schoolId)
+    public TeacherInfoData(string teacherId, string teacherName, List<ListWrapper<string>> roster, string schoolId)
     {
         this.fileName = teacherId.ToString();
         this.teacherId = teacherId;

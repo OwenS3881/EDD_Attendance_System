@@ -6,13 +6,13 @@ using System;
 [System.Serializable]
 public class StudentInfoData : BasicData , IComparable
 {
-    public int studentId;
+    public string studentId;
     public string studentName;
-    public int[] classList;
-    public int schoolId;
+    public string[] classList;
+    public string schoolId;
     public List<string> attendanceObjects;
 
-    public StudentInfoData(int studentId, string studentName, int[] classList, int schoolId, List<string> attendanceObjects)
+    public StudentInfoData(string studentId, string studentName, string[] classList, string schoolId, List<string> attendanceObjects)
     {
         this.fileName = studentId.ToString();
         this.studentId = studentId;

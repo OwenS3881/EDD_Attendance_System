@@ -49,9 +49,9 @@ public class TeacherExcuseRequestManager : MonoBehaviour
 
     public void GetSchoolData()
     {
-        if (TeacherHomeManager.instance == null || TeacherHomeManager.instance.GetSchoolId() == 0) return;
+        if (TeacherHomeManager.instance == null || TeacherHomeManager.instance.GetSchoolId().Equals("0")) return;
 
-        Database.instance.ReadData(TeacherHomeManager.instance.GetSchoolId().ToString(), new Database.ReadDataCallback<SchoolInfoData>(GetSchoolDataCallback));
+        Database.instance.ReadData(TeacherHomeManager.instance.GetSchoolId(), new Database.ReadDataCallback<SchoolInfoData>(GetSchoolDataCallback));
         DesktopGraphics.instance.Loading(true);
     }
 
@@ -84,7 +84,7 @@ public class TeacherExcuseRequestManager : MonoBehaviour
         mainScrollView.SetActive(false);
         decisionScrollView.SetActive(true);
 
-        studentField.text = selectedRequest.studentId.ToString();
+        studentField.text = selectedRequest.studentId;
         dateField.text = DateButton.ConvertToNiceDate(selectedRequest.date);
         reasonField.text = selectedRequest.reason;
 
@@ -114,9 +114,9 @@ public class TeacherExcuseRequestManager : MonoBehaviour
         excuseImageFitter.aspectRatio = (float)downloadedTexture.width / (float)downloadedTexture.height;
     }
 
-    private void AddStudentName(int studentId, TMP_Text field)
+    private void AddStudentName(string studentId, TMP_Text field)
     {
-        Database.instance.ReadData(studentId.ToString(), new Database.ReadDataCallbackParams<StudentInfoData>(AddStudentNameCallback), new object[] { field });
+        Database.instance.ReadData(studentId, new Database.ReadDataCallbackParams<StudentInfoData>(AddStudentNameCallback), new object[] { field });
     }
 
     private void AddStudentNameCallback(StudentInfoData output, object[] additionalParams)
@@ -159,7 +159,7 @@ public class TeacherExcuseRequestManager : MonoBehaviour
 
         for (int i = 0; i < schoolData.excuseRequests.Count; i++)
         {
-            if (!schoolData.excuseRequests[i].teacherId.ToString().Equals(Database.instance.GetUsername())) continue;
+            if (!schoolData.excuseRequests[i].teacherId.Equals(Database.instance.GetUsername())) continue;
 
             if (schoolData.excuseRequests[i].teacherDenied) continue;
 
@@ -176,7 +176,7 @@ public class TeacherExcuseRequestManager : MonoBehaviour
     public void Approve()
     {
         DesktopGraphics.instance.Loading(true);
-        Database.instance.ReadData(currentRequest.studentId.ToString(), new Database.ReadDataCallback<StudentInfoData>(ApproveCallback));
+        Database.instance.ReadData(currentRequest.studentId, new Database.ReadDataCallback<StudentInfoData>(ApproveCallback));
     }
 
     private void ApproveCallback(StudentInfoData output)
@@ -192,8 +192,8 @@ public class TeacherExcuseRequestManager : MonoBehaviour
 
     private void MarkPresentCallback(StudentAttendanceEntryData output, object[] additionalParams)
     {
-        int studentId = (int)additionalParams[0];
-        int teacherId = (int)additionalParams[1];
+        string studentId = (string)additionalParams[0];
+        string teacherId = (string)additionalParams[1];
         string date = (string)additionalParams[2];
         bool tardy = (bool)additionalParams[3];
         StudentInfoData studentInfo = (StudentInfoData)additionalParams[4];
@@ -210,16 +210,16 @@ public class TeacherExcuseRequestManager : MonoBehaviour
         }
 
         //presentList
-        if (!updatedEntry.presentList.Contains(teacherId.ToString())) updatedEntry.presentList.Add(teacherId.ToString());
+        if (!updatedEntry.presentList.Contains(teacherId)) updatedEntry.presentList.Add(teacherId);
 
         //tardyList
         if (tardy)
         {
-            if (!updatedEntry.tardyList.Contains(teacherId.ToString())) updatedEntry.tardyList.Add(teacherId.ToString());
+            if (!updatedEntry.tardyList.Contains(teacherId)) updatedEntry.tardyList.Add(teacherId);
         }
         else
         {
-            if (updatedEntry.tardyList.Contains(teacherId.ToString())) updatedEntry.tardyList.Remove(teacherId.ToString());
+            if (updatedEntry.tardyList.Contains(teacherId)) updatedEntry.tardyList.Remove(teacherId);
         }
 
         if (!studentInfo.attendanceObjects.Contains(updatedEntry.fileName))

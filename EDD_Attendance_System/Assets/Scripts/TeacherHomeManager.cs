@@ -15,7 +15,7 @@ public class TeacherHomeManager : MonoBehaviour
     [SerializeField] private TMP_Text idField;
     [SerializeField] private TMP_Text emailField;
 
-    private int schoolId;
+    private string schoolId;
 
     private void Awake()
     {
@@ -36,7 +36,7 @@ public class TeacherHomeManager : MonoBehaviour
         GetName();
     }
 
-    public int GetSchoolId()
+    public string GetSchoolId()
     {
         return schoolId;
     }

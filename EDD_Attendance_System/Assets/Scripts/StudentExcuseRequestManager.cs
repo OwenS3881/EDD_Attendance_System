@@ -56,7 +56,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
 
         LoadTeacherIds();
 
-        Database.instance.ReadData(studentInfo.schoolId.ToString(), new Database.ReadDataCallback<SchoolInfoData>(GetSchoolDataCallback));
+        Database.instance.ReadData(studentInfo.schoolId, new Database.ReadDataCallback<SchoolInfoData>(GetSchoolDataCallback));
     }
 
     private void GetSchoolDataCallback(SchoolInfoData output)
@@ -82,9 +82,9 @@ public class StudentExcuseRequestManager : MonoBehaviour
 
         List<string> optionsList = new List<string>();
 
-        foreach (int id in studentInfo.classList)
+        foreach (string id in studentInfo.classList)
         {
-            optionsList.Add(id.ToString());
+            optionsList.Add(id);
         }
 
         teacherIdDropdown.AddOptions(optionsList);
@@ -95,9 +95,9 @@ public class StudentExcuseRequestManager : MonoBehaviour
         }
     }
 
-    private void AddTeacherNameToDropdown(int teacherId, int dropdownListIndex)
+    private void AddTeacherNameToDropdown(string teacherId, int dropdownListIndex)
     {
-        Database.instance.ReadData(teacherId.ToString(), new Database.ReadDataCallbackParams<TeacherInfoData>(AddTeacherNameToDropdownCallback), new object[] { dropdownListIndex });
+        Database.instance.ReadData(teacherId, new Database.ReadDataCallbackParams<TeacherInfoData>(AddTeacherNameToDropdownCallback), new object[] { dropdownListIndex });
     }
 
     private void AddTeacherNameToDropdownCallback(TeacherInfoData output, object[] additionalParams)
@@ -133,7 +133,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
         }
 
         MobileGraphics.instance.Loading(true);
-        Database.instance.ReadData(studentInfo.schoolId.ToString(), new Database.ReadDataCallback<SchoolInfoData>(ReloadSchoolDataCallback));
+        Database.instance.ReadData(studentInfo.schoolId, new Database.ReadDataCallback<SchoolInfoData>(ReloadSchoolDataCallback));
     }
 
     private void ReloadSchoolDataCallback(SchoolInfoData output)
@@ -153,11 +153,11 @@ public class StudentExcuseRequestManager : MonoBehaviour
 
     private void GetAttendanceCallback(StudentAttendanceEntryData output)
     {
-        int selectedTeacher = Int32.Parse(teacherIdDropdown.options[teacherIdDropdown.value].text.Split(" - ")[0]);
+        string selectedTeacher = teacherIdDropdown.options[teacherIdDropdown.value].text.Split(" - ")[0];
 
         if (output != null)
         {
-            if (output.presentList.Contains(selectedTeacher.ToString()) && !output.tardyList.Contains(selectedTeacher.ToString()))
+            if (output.presentList.Contains(selectedTeacher) && !output.tardyList.Contains(selectedTeacher))
             {
                 MobileGraphics.instance.DisplayMessage("Already present for this day");
                 MobileGraphics.instance.Loading(false);
@@ -178,7 +178,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
 
         if (schoolInfo.excuseRequests == null) schoolInfo.excuseRequests = new List<AttendanceExcuseRequest>();
 
-        currentRequest = new AttendanceExcuseRequest(Int32.Parse(Database.instance.GetUsername()), selectedTeacher, dateButton.CurrentDate, reasonInput.text, false);
+        currentRequest = new AttendanceExcuseRequest(Database.instance.GetUsername(), selectedTeacher, dateButton.CurrentDate, reasonInput.text, false);
 
         if (currentImage == null) //no image submission
         {
@@ -193,7 +193,7 @@ public class StudentExcuseRequestManager : MonoBehaviour
     private void SaveRequest()
     {
         MobileGraphics.instance.Loading(true);
-        Database.instance.ReadData(studentInfo.schoolId.ToString(), new Database.ReadDataCallback<SchoolInfoData>(SaveRequestCallback));
+        Database.instance.ReadData(studentInfo.schoolId, new Database.ReadDataCallback<SchoolInfoData>(SaveRequestCallback));
     }
 
     private void SaveRequestCallback(SchoolInfoData output)

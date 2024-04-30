@@ -5,15 +5,15 @@ using UnityEngine;
 [System.Serializable]
 public class AttendanceExcuseRequest
 {
-    public int studentId;
-    public int teacherId;
+    public string studentId;
+    public string teacherId;
     public string date;
     public string reason;
     public bool teacherDenied;
     public string imageName;
     public string imageToken;
 
-    public AttendanceExcuseRequest(int studentId, int teacherId, string date, string reason, bool teacherDenied)
+    public AttendanceExcuseRequest(string studentId, string teacherId, string date, string reason, bool teacherDenied)
     {
         this.studentId = studentId;
         this.teacherId = teacherId;
@@ -22,7 +22,7 @@ public class AttendanceExcuseRequest
         this.teacherDenied = teacherDenied;
     }
 
-    public AttendanceExcuseRequest(int studentId, int teacherId, string date, string reason, bool teacherDenied, string imageName, string imageToken)
+    public AttendanceExcuseRequest(string studentId, string teacherId, string date, string reason, bool teacherDenied, string imageName, string imageToken)
     {
         this.studentId = studentId;
         this.teacherId = teacherId;

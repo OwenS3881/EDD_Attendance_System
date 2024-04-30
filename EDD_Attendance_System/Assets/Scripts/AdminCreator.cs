@@ -70,14 +70,14 @@ public class AdminCreator : MonoBehaviour
     //Teacher Creation Methods
     public void CreateTeacher()
     {
-        TeacherInfoData newTeacher = new TeacherInfoData(Int32.Parse(teacherIdInput.text), teacherNameInput.text, new List<ListWrapper<string>>(), Int32.Parse(Database.instance.GetUsername()));
+        TeacherInfoData newTeacher = new TeacherInfoData(teacherIdInput.text, teacherNameInput.text, new List<ListWrapper<string>>(), Database.instance.GetUsername());
         Database.instance.SaveDataToFirebase(newTeacher);
     }
 
     //Student Creation Methods
     public void CreateStudent()
     {
-        int[] teacherIds = new int[7];
+        string[] teacherIds = new string[7];
         for (int i = 0; i < studentClassesInput.Length; i++)
         {
             if (string.IsNullOrEmpty(studentClassesInput[i].text))
@@ -85,29 +85,28 @@ public class AdminCreator : MonoBehaviour
                 Debug.LogError("Fill out all classes");
                 return;
             }
-            teacherIds[i] = Int32.Parse(studentClassesInput[i].text);
+            teacherIds[i] = studentClassesInput[i].text;
         }
 
-        int studentId = Int32.Parse(studentIdInput.text);
         string studentName = studentNameInput.text;
 
-        StudentInfoData newStudent = new StudentInfoData(studentId, studentName, teacherIds, Int32.Parse(Database.instance.GetUsername()), new List<string>());
+        StudentInfoData newStudent = new StudentInfoData(studentIdInput.text, studentName, teacherIds, Database.instance.GetUsername(), new List<string>());
         Database.instance.SaveDataToFirebase(newStudent);
 
-        StartCoroutine(AddStudentToRoster(studentId, teacherIds, 0));
+        StartCoroutine(AddStudentToRoster(studentIdInput.text, teacherIds, 0));
     }
 
-    IEnumerator AddStudentToRoster(int studentId, int[] teacherIds, int index)
+    IEnumerator AddStudentToRoster(string studentId, string[] teacherIds, int index)
     {
         yield return new WaitForSeconds(0.1f);
-        Database.instance.ReadData(teacherIds[index].ToString(), new Database.ReadDataCallbackParams<TeacherInfoData>(AddStudentToRosterCallback), new object[] { studentId, teacherIds, index });
+        Database.instance.ReadData(teacherIds[index], new Database.ReadDataCallbackParams<TeacherInfoData>(AddStudentToRosterCallback), new object[] { studentId, teacherIds, index });
     }
 
     private void AddStudentToRosterCallback(TeacherInfoData output, object[] additionalParams)
     {
 
-        int studentId = (int)additionalParams[0];
-        int[] teacherIds = (int[])additionalParams[1];
+        string studentId = (string)additionalParams[0];
+        string[] teacherIds = (string[])additionalParams[1];
         int index = (int)additionalParams[2];
 
         TeacherInfoData updatedInfo;
@@ -122,7 +121,7 @@ public class AdminCreator : MonoBehaviour
             updatedInfo = new TeacherInfoData(output);
         }
 
-        updatedInfo.roster[index].Add(studentId.ToString());
+        updatedInfo.roster[index].Add(studentId);
 
         if (updatedInfo.roster[index][0] == "Default")
         {
@@ -148,18 +147,18 @@ public class AdminCreator : MonoBehaviour
             date = DateTime.Today.ToString("yyyy-MM-dd");
         }
 
-        MarkPresent(Int32.Parse(presentStudentField.text), Int32.Parse(presentTeacherField.text), date, presentTardyToggle.isOn);
+        MarkPresent(presentStudentField.text, presentTeacherField.text, date, presentTardyToggle.isOn);
     }
 
-    public void MarkPresent(int studentId, int teacherId, string date, bool tardy)
+    public void MarkPresent(string studentId, string teacherId, string date, bool tardy)
     {
         Database.instance.ReadData(studentId + "*" + date, new Database.ReadDataCallbackParams<StudentAttendanceEntryData>(MarkPresentCallback), new object[] { studentId, teacherId, date, tardy });
     }
 
     private static void MarkPresentCallback(StudentAttendanceEntryData output, object[] additionalParams)
     {
-        int studentId = (int)additionalParams[0];
-        int teacherId = (int)additionalParams[1];
+        string studentId = (string)additionalParams[0];
+        string teacherId = (string)additionalParams[1];
         string date = (string)additionalParams[2];
         bool tardy = (bool)additionalParams[3];
 
@@ -175,16 +174,16 @@ public class AdminCreator : MonoBehaviour
         }
 
         //presentList
-        if (!updatedEntry.presentList.Contains(teacherId.ToString())) updatedEntry.presentList.Add(teacherId.ToString());
+        if (!updatedEntry.presentList.Contains(teacherId)) updatedEntry.presentList.Add(teacherId);
 
         //tardyList
         if (tardy)
         {
-            if (!updatedEntry.tardyList.Contains(teacherId.ToString())) updatedEntry.tardyList.Add(teacherId.ToString());
+            if (!updatedEntry.tardyList.Contains(teacherId)) updatedEntry.tardyList.Add(teacherId);
         }
         else
         {
-            if (updatedEntry.tardyList.Contains(teacherId.ToString())) updatedEntry.tardyList.Remove(teacherId.ToString());
+            if (updatedEntry.tardyList.Contains(teacherId)) updatedEntry.tardyList.Remove(teacherId);
         }
 
 
@@ -215,7 +214,7 @@ public class AdminCreator : MonoBehaviour
     {
         if (output == null)
         {
-            currentDayStudentAttendance = new StudentAttendanceEntryData(Int32.Parse(dayScheduleStudentIdField.text), dayScheduleDateField.text, new List<string>(), new List<string>());
+            currentDayStudentAttendance = new StudentAttendanceEntryData(dayScheduleStudentIdField.text, dayScheduleDateField.text, new List<string>(), new List<string>());
         }
         else
         {
@@ -241,16 +240,16 @@ public class AdminCreator : MonoBehaviour
 
         for (int i = 0; i < 7; i++)
         {
-            classAttendanceParents[i].label.text = currentDayStudent.classList[i].ToString();
+            classAttendanceParents[i].label.text = currentDayStudent.classList[i];
             AddTeacherNameToIDField(currentDayStudent.classList[i], i);
-            classAttendanceParents[i].presentToggle.isOn = currentDayStudentAttendance.presentList.Contains(currentDayStudent.classList[i].ToString());
-            classAttendanceParents[i].tardyToggle.isOn = currentDayStudentAttendance.tardyList.Contains(currentDayStudent.classList[i].ToString());
+            classAttendanceParents[i].presentToggle.isOn = currentDayStudentAttendance.presentList.Contains(currentDayStudent.classList[i]);
+            classAttendanceParents[i].tardyToggle.isOn = currentDayStudentAttendance.tardyList.Contains(currentDayStudent.classList[i]);
         }
     }
 
-    private void AddTeacherNameToIDField(int teacherId, int index)
+    private void AddTeacherNameToIDField(string teacherId, int index)
     {
-        Database.instance.ReadData(teacherId.ToString(), new Database.ReadDataCallbackParams<TeacherInfoData>(AddTeacherNameToIDFieldCallback), new object[] { index });
+        Database.instance.ReadData(teacherId, new Database.ReadDataCallbackParams<TeacherInfoData>(AddTeacherNameToIDFieldCallback), new object[] { index });
     }
 
     private void AddTeacherNameToIDFieldCallback(TeacherInfoData output, object[] additionalParams)
@@ -275,12 +274,12 @@ public class AdminCreator : MonoBehaviour
         {
             if (classAttendanceParents[i].presentToggle.isOn)
             {
-                currentDayStudentAttendance.presentList.Add(currentDayStudent.classList[i].ToString());
+                currentDayStudentAttendance.presentList.Add(currentDayStudent.classList[i]);
             }
 
             if (classAttendanceParents[i].tardyToggle.isOn)
             {
-                currentDayStudentAttendance.tardyList.Add(currentDayStudent.classList[i].ToString());
+                currentDayStudentAttendance.tardyList.Add(currentDayStudent.classList[i]);
             }
         }
         Database.instance.SaveDataToFirebase(currentDayStudentAttendance);
@@ -307,13 +306,13 @@ public class AdminCreator : MonoBehaviour
         int period = Int32.Parse(teacherAttendancePeriodField.text);
         for (int i = 0; i < currentTeacherAttendance.roster[period - 1].internalList.Count; i++)
         {
-            Database.instance.ReadData(currentTeacherAttendance.roster[period - 1].internalList[i] + "*" + teacherAttendanceDateField.text, new Database.ReadDataCallbackParams<StudentAttendanceEntryData>(SelectTeacherGetStudentCallback), new object[] { Int32.Parse(currentTeacherAttendance.roster[period - 1].internalList[i]) });
+            Database.instance.ReadData(currentTeacherAttendance.roster[period - 1].internalList[i] + "*" + teacherAttendanceDateField.text, new Database.ReadDataCallbackParams<StudentAttendanceEntryData>(SelectTeacherGetStudentCallback), new object[] { currentTeacherAttendance.roster[period - 1].internalList[i] });
         }
     }
 
     private void SelectTeacherGetStudentCallback(StudentAttendanceEntryData output, object[] additionalParams)
     {
-        int studentId = (int)additionalParams[0];
+        string studentId = (string)additionalParams[0];
 
         StudentAttendanceEntryData student;
 
@@ -359,7 +358,7 @@ public class AdminCreator : MonoBehaviour
 
             TMP_Text field = checkBox.label;
 
-            field.text = teacherRosterAttendances[i].studentId.ToString();
+            field.text = teacherRosterAttendances[i].studentId;
 
             AddStudentNameToIDField(teacherRosterAttendances[i].studentId, field);
 
@@ -369,9 +368,9 @@ public class AdminCreator : MonoBehaviour
          
     }
 
-    private void AddStudentNameToIDField(int studentId, TMP_Text field)
+    private void AddStudentNameToIDField(string studentId, TMP_Text field)
     {
-        Database.instance.ReadData(studentId.ToString(), new Database.ReadDataCallbackParams<StudentInfoData>(AddStudentNameToIDFieldCallback), new object[] { field });
+        Database.instance.ReadData(studentId, new Database.ReadDataCallbackParams<StudentInfoData>(AddStudentNameToIDFieldCallback), new object[] { field });
     }
 
     private void AddStudentNameToIDFieldCallback(StudentInfoData output, object[] additionalParams)

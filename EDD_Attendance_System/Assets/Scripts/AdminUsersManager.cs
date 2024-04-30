@@ -64,7 +64,7 @@ public class AdminUsersManager : MonoBehaviour
             return;
         }
 
-        if (AdminHomeManager.instance.currentData.teacherList.Contains(Int32.Parse(teacherIdInput.text)))
+        if (AdminHomeManager.instance.currentData.teacherList.Contains(teacherIdInput.text))
         {
             DesktopGraphics.instance.DisplayMessage("Teacher ID already exists");
             return;
@@ -99,11 +99,11 @@ public class AdminUsersManager : MonoBehaviour
 
         AdminHomeManager.instance.currentData = output;
 
-        AdminHomeManager.instance.currentData.teacherList.Add(Int32.Parse(teacherIdInput.text));
+        AdminHomeManager.instance.currentData.teacherList.Add(teacherIdInput.text);
         
         Database.instance.SaveDataToFirebase(AdminHomeManager.instance.currentData);
 
-        TeacherInfoData newTeacher = new TeacherInfoData(Int32.Parse(teacherIdInput.text), teacherNameInput.text, new List<ListWrapper<string>>(), Int32.Parse(Database.instance.GetUsername()));
+        TeacherInfoData newTeacher = new TeacherInfoData(teacherIdInput.text, teacherNameInput.text, new List<ListWrapper<string>>(), Database.instance.GetUsername());
         Database.instance.SaveDataToFirebase(newTeacher);
 
         DesktopGraphics.instance.Loading(false);
@@ -130,7 +130,7 @@ public class AdminUsersManager : MonoBehaviour
             return;
         }
 
-        if (AdminHomeManager.instance.currentData.studentList.Contains(Int32.Parse(studentIdInput.text)))
+        if (AdminHomeManager.instance.currentData.studentList.Contains(studentIdInput.text))
         {
             DesktopGraphics.instance.DisplayMessage("Student ID already exists");
             DesktopGraphics.instance.Loading(false);
@@ -165,7 +165,7 @@ public class AdminUsersManager : MonoBehaviour
 
         AdminHomeManager.instance.currentData = output;
 
-        int[] teacherIds = new int[7];
+        string[] teacherIds = new string[7];
         for (int i = 0; i < studentClassesInput.Length; i++)
         {
             if (string.IsNullOrEmpty(studentClassesInput[i].text))
@@ -174,19 +174,19 @@ public class AdminUsersManager : MonoBehaviour
                 DesktopGraphics.instance.Loading(false);
                 return;
             }
-            if (!AdminHomeManager.instance.currentData.teacherList.Contains(Int32.Parse(studentClassesInput[i].text)) && !Database.freePeriodIds.Contains(Int32.Parse(studentClassesInput[i].text)))
+            if (!AdminHomeManager.instance.currentData.teacherList.Contains(studentClassesInput[i].text) && !Database.freePeriodIds.Contains(studentClassesInput[i].text))
             {
                 DesktopGraphics.instance.DisplayMessage($"Teacher for period {i + 1} does not exist");
                 DesktopGraphics.instance.Loading(false);
                 return;
             }
-            teacherIds[i] = Int32.Parse(studentClassesInput[i].text);
+            teacherIds[i] = studentClassesInput[i].text;
         }
 
-        int studentId = Int32.Parse(studentIdInput.text);
+        string studentId = studentIdInput.text;
         string studentName = studentNameInput.text;
 
-        StudentInfoData newStudent = new StudentInfoData(studentId, studentName, teacherIds, Int32.Parse(Database.instance.GetUsername()), new List<string>());
+        StudentInfoData newStudent = new StudentInfoData(studentId, studentName, teacherIds, Database.instance.GetUsername(), new List<string>());
         Database.instance.SaveDataToFirebase(newStudent);
 
         AdminHomeManager.instance.currentData.studentList.Add(studentId);
@@ -195,17 +195,17 @@ public class AdminUsersManager : MonoBehaviour
         StartCoroutine(AddStudentToRoster(studentId, teacherIds, 0));
     }
 
-    IEnumerator AddStudentToRoster(int studentId, int[] teacherIds, int index)
+    IEnumerator AddStudentToRoster(string studentId, string[] teacherIds, int index)
     {
         yield return new WaitForSeconds(0.1f);
-        Database.instance.ReadData(teacherIds[index].ToString(), new Database.ReadDataCallbackParams<TeacherInfoData>(AddStudentToRosterCallback), new object[] { studentId, teacherIds, index });
+        Database.instance.ReadData(teacherIds[index], new Database.ReadDataCallbackParams<TeacherInfoData>(AddStudentToRosterCallback), new object[] { studentId, teacherIds, index });
     }
 
     private void AddStudentToRosterCallback(TeacherInfoData output, object[] additionalParams)
     {
 
-        int studentId = (int)additionalParams[0];
-        int[] teacherIds = (int[])additionalParams[1];
+        string studentId = (string)additionalParams[0];
+        string[] teacherIds = (string[])additionalParams[1];
         int index = (int)additionalParams[2];
 
         TeacherInfoData updatedInfo;
@@ -222,7 +222,7 @@ public class AdminUsersManager : MonoBehaviour
             updatedInfo = new TeacherInfoData(output);
         }
 
-        updatedInfo.roster[index].Add(studentId.ToString());
+        updatedInfo.roster[index].Add(studentId);
 
         if (updatedInfo.roster[index][0] == "Default")
         {
@@ -271,9 +271,9 @@ public class AdminUsersManager : MonoBehaviour
 
         AdminHomeManager.instance.currentData = output;
 
-        foreach (int student in AdminHomeManager.instance.currentData.studentList)
+        foreach (string student in AdminHomeManager.instance.currentData.studentList)
         {
-            Database.instance.ReadData(student.ToString(), new Database.ReadDataCallback<StudentInfoData>(GetStudentCallback));
+            Database.instance.ReadData(student, new Database.ReadDataCallback<StudentInfoData>(GetStudentCallback));
         }
 
     }
@@ -305,7 +305,7 @@ public class AdminUsersManager : MonoBehaviour
             StudentViewBox newBox = Instantiate(studentViewPrefab, studentViewParent.transform).GetComponent<StudentViewBox>();
 
             newBox.StudentName = student.studentName;
-            newBox.Id = student.studentId.ToString();
+            newBox.Id = student.studentId;
         }
 
         UpdateStudentViewParentHeight();
@@ -354,9 +354,9 @@ public class AdminUsersManager : MonoBehaviour
 
         AdminHomeManager.instance.currentData = output;
 
-        foreach (int teacher in AdminHomeManager.instance.currentData.teacherList)
+        foreach (string teacher in AdminHomeManager.instance.currentData.teacherList)
         {
-            Database.instance.ReadData(teacher.ToString(), new Database.ReadDataCallback<TeacherInfoData>(GetTeacherCallback));
+            Database.instance.ReadData(teacher, new Database.ReadDataCallback<TeacherInfoData>(GetTeacherCallback));
         }
 
     }
@@ -388,7 +388,7 @@ public class AdminUsersManager : MonoBehaviour
             TeacherViewBox newBox = Instantiate(teacherViewPrefab, teacherViewParent.transform).GetComponent<TeacherViewBox>();
 
             newBox.TeacherName = teacher.teacherName;
-            newBox.Id = teacher.teacherId.ToString();
+            newBox.Id = teacher.teacherId;
         }
 
         UpdateTeacherViewParentHeight();
@@ -442,7 +442,7 @@ public class AdminUsersManager : MonoBehaviour
             return;
         }
 
-        if (!AdminHomeManager.instance.currentData.studentList.Contains(Int32.Parse(deleteStudentInput.text)))
+        if (!AdminHomeManager.instance.currentData.studentList.Contains(deleteStudentInput.text))
         {
             DesktopGraphics.instance.DisplayMessage("Student ID does not exist");
             CancelDelete();
@@ -473,10 +473,10 @@ public class AdminUsersManager : MonoBehaviour
         //Clear from rosters
         for (int i = 0; i < output.classList.Length; i++)
         {
-            Database.instance.ReadData(output.classList[i].ToString(), new Database.ReadDataCallbackParams<TeacherInfoData>(DeleteStudentFromRosterCallback), new object[] { i });
+            Database.instance.ReadData(output.classList[i], new Database.ReadDataCallbackParams<TeacherInfoData>(DeleteStudentFromRosterCallback), new object[] { i });
         }
 
-        Database.instance.ReadData(output.schoolId.ToString(), new Database.ReadDataCallback<SchoolInfoData>(FinalDeleteStudentCallback));
+        Database.instance.ReadData(output.schoolId, new Database.ReadDataCallback<SchoolInfoData>(FinalDeleteStudentCallback));
     }
 
     private void FinalDeleteStudentCallback(SchoolInfoData output)
@@ -489,7 +489,7 @@ public class AdminUsersManager : MonoBehaviour
         AdminHomeManager.instance.currentData = output;
 
         //Remove student from student list
-        AdminHomeManager.instance.currentData.studentList.Remove(Int32.Parse(deleteStudentInput.text));
+        AdminHomeManager.instance.currentData.studentList.Remove(deleteStudentInput.text);
 
         Database.instance.SaveDataToFirebase(AdminHomeManager.instance.currentData);
 
