@@ -190,7 +190,7 @@ public class QRCodeScanner : MonoBehaviour
 
     private void VerifyAndMarkPresent(string[] splitFields)
     {
-        int period = Array.IndexOf(studentInfo.classList, Int32.Parse(splitFields[1])) + 1;
+        int period = Array.IndexOf(studentInfo.classList, splitFields[1]) + 1;
         List<int> periods = AdminHomeManager.GetPeriods(splitFields[2], schoolInfo);
 
         if (!periods.Contains(period))
