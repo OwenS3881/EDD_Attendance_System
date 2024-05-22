@@ -5,46 +5,46 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/MobileLogin.unity
     guid: d64495789fc86490895601a04beb99bc
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/MobileHome.unity
     guid: 8a55ef36725574b82a19f0cf555870b3
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/QRScanner.unity
     guid: 13684a1ae3d7345b3b458236d902e161
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/MobileViewAttendance.unity
     guid: d018b8f54cf1faf4a8d34c408064c0b0
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/MobileAccountInfo.unity
     guid: b94b373854a61c8488e829454dfee044
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/MobileExcuseRequest.unity
     guid: 576d6007a6a724c26ad66e6f52a73a52
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/MobileFreePeriod.unity
     guid: d85a1468eced046e98f1f1ae96e5cf8c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/NavScreen.unity
     guid: 14e879ebd36c940c0ac7c09a10d4a0d8
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TeacherLogin.unity
     guid: 2f322bf0c0d943e4998f25ff736f5711
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TeacherHome.unity
     guid: 67107d3043372144087a596141fc7f3f
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/AdminLogin.unity
     guid: 06f4c67625a7e4e99ba4c2631b3889ab
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/AdminHome.unity
     guid: ff08011a6841d4f4481c8baa609e38c4
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ParentHome.unity
     guid: ece7c3275d7be4b1e9ca1ab7387da676
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ParentLogin.unity
     guid: 7e77b04c2ed7a45ff8ce82863e9720e6
   m_configObjects: {}
